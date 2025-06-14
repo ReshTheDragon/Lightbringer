@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Audio Square Button_0: 8511433228137513366
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
