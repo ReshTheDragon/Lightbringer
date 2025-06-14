@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 
-public class SettingsController : MonoBehaviour {
+public class SettingsController : MonoBehaviour
+{
     public Toggle fullscreenToggle;
     public Dropdown resolutionDrop;
     public Dropdown textQualityDrop;
@@ -27,7 +28,7 @@ public class SettingsController : MonoBehaviour {
         saveButton.onClick.AddListener(delegate { saveSettings(); });
 
         resolutions = Screen.resolutions;
-        foreach(Resolution resolution in resolutions)
+        foreach (Resolution resolution in resolutions)
         {
             resolutionDrop.options.Add(new Dropdown.OptionData(resolution.ToString()));
         }
@@ -37,7 +38,7 @@ public class SettingsController : MonoBehaviour {
 
     public void FullscreenToggle()
     {
-       gameSettings.fullscreen = Screen.fullScreen = fullscreenToggle.isOn;
+        gameSettings.fullscreen = Screen.fullScreen = fullscreenToggle.isOn;
     }
 
     public void ResolutionChange()
@@ -68,20 +69,36 @@ public class SettingsController : MonoBehaviour {
 
     public void saveSettings()
     {
-        string jsonData = JsonUtility.ToJson(gameSettings,true);
+        string jsonData = JsonUtility.ToJson(gameSettings, true);
         File.WriteAllText(Application.persistentDataPath + "/gamesettings.json", jsonData);
         MenuController.instance.closeOptions();
     }
 
     public void loadSettings()
     {
-        gameSettings = JsonUtility.FromJson<Settings>(File.ReadAllText( Application.persistentDataPath + "/gamesettings.json"));
-        fullscreenToggle.isOn = gameSettings.fullscreen;
-        resolutionDrop.value = gameSettings.resolutionIndex;
-        antialiasingDrop.value = gameSettings.antialiasing;
-        vSyncDrop.value = gameSettings.vSync;
-        textQualityDrop.value = gameSettings.textureQuality;
-        volume.value = gameSettings.volume;
-        resolutionDrop.RefreshShownValue();
+        string path = Application.persistentDataPath + "/gamesettings.json";
+
+        if (File.Exists(path))
+        {
+            gameSettings = JsonUtility.FromJson<Settings>(File.ReadAllText(path));
+            fullscreenToggle.isOn = gameSettings.fullscreen;
+            resolutionDrop.value = gameSettings.resolutionIndex;
+            antialiasingDrop.value = gameSettings.antialiasing;
+            vSyncDrop.value = gameSettings.vSync;
+            textQualityDrop.value = gameSettings.textureQuality;
+            volume.value = gameSettings.volume;
+            resolutionDrop.RefreshShownValue();
+        }
+        else
+        {
+            Debug.LogWarning("Settings file not found, using default values.");
+            // Gán giá trị mặc định nếu cần
+            fullscreenToggle.isOn = Screen.fullScreen;
+            resolutionDrop.value = 0;
+            antialiasingDrop.value = 0;
+            vSyncDrop.value = 0;
+            textQualityDrop.value = 0;
+            volume.value = AudioListener.volume;
+        }
     }
 }
