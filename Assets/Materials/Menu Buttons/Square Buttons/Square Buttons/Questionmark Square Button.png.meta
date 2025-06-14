@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Questionmark Square Button_0: -4057119156662005019
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
