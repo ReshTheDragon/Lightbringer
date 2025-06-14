@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Music Square Button_0: -4605633173923394187
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

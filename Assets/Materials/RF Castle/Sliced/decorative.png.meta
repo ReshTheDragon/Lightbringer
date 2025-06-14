@@ -5,7 +5,7 @@ AssetOrigin:
   productId: 164725
   packageName: Rogue Fantasy Castle
   packageVersion: 1.0
-  assetPath: Assets/RF Castle/Sliced/decorative.png
+  assetPath: Assets/Materials/RF Castle/Sliced/decorative.png
   uploadId: 357221
 TextureImporter:
   internalIDToNameTable:
