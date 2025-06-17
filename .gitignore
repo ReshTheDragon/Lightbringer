@@ -18,3 +18,7 @@ sysinfo.txt
 *.sln.iml
 .DS_Store
 Thumbs.db
+Lib/
+UserSettings/
+*.dwlt
+UserSettings/Layouts/*.dwlt
