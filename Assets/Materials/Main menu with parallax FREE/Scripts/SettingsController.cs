@@ -76,29 +76,13 @@ public class SettingsController : MonoBehaviour
 
     public void loadSettings()
     {
-        string path = Application.persistentDataPath + "/gamesettings.json";
-
-        if (File.Exists(path))
-        {
-            gameSettings = JsonUtility.FromJson<Settings>(File.ReadAllText(path));
-            fullscreenToggle.isOn = gameSettings.fullscreen;
-            resolutionDrop.value = gameSettings.resolutionIndex;
-            antialiasingDrop.value = gameSettings.antialiasing;
-            vSyncDrop.value = gameSettings.vSync;
-            textQualityDrop.value = gameSettings.textureQuality;
-            volume.value = gameSettings.volume;
-            resolutionDrop.RefreshShownValue();
-        }
-        else
-        {
-            Debug.LogWarning("Settings file not found, using default values.");
-            // Gán giá trị mặc định nếu cần
-            fullscreenToggle.isOn = Screen.fullScreen;
-            resolutionDrop.value = 0;
-            antialiasingDrop.value = 0;
-            vSyncDrop.value = 0;
-            textQualityDrop.value = 0;
-            volume.value = AudioListener.volume;
-        }
+        gameSettings = JsonUtility.FromJson<Settings>(File.ReadAllText(Application.persistentDataPath + "/gamesettings.json"));
+        fullscreenToggle.isOn = gameSettings.fullscreen;
+        resolutionDrop.value = gameSettings.resolutionIndex;
+        antialiasingDrop.value = gameSettings.antialiasing;
+        vSyncDrop.value = gameSettings.vSync;
+        textQualityDrop.value = gameSettings.textureQuality;
+        volume.value = gameSettings.volume;
+        resolutionDrop.RefreshShownValue();
     }
 }

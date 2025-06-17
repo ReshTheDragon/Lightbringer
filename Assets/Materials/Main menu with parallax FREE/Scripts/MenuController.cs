@@ -68,7 +68,7 @@ public class MenuController : MonoBehaviour
     private AudioSource Audio;
 
     //Events
-    [SerializeField]
+    [SerializeField, HideInInspector]
     public UnityEvent[] Events;
 
     //Exit Menu
@@ -79,7 +79,6 @@ public class MenuController : MonoBehaviour
     [SerializeField, HideInInspector]
     public GameObject OptionsMenu;
 
-    public GameObject optionsPanel;
 
     void Start()
     {
@@ -384,16 +383,20 @@ public class MenuController : MonoBehaviour
         Application.Quit();
     }
 
+    //Open Options
+    public void openOptions()
+    {
+        OptionsMenu.gameObject.GetComponent<Animation>().Play("Fade In");
+        mainMenu = false;
+        OptionsMenu.transform.SetAsLastSibling();
+    }
+
+    //Close Options
     public void closeOptions()
     {
-        if (optionsPanel != null)
-        {
-            optionsPanel.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("Options panel is not assigned in MenuController.");
-        }
+        OptionsMenu.gameObject.GetComponent<Animation>().Play("Fade out");
+        mainMenu = true;
     }
 
 }
+
