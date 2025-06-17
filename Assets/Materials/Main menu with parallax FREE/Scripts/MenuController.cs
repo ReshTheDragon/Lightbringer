@@ -242,45 +242,96 @@ public class MenuController : MonoBehaviour
     //Select scene Event
     public void selectScene()
     {
-        Destroy(activeBackground[0]);
-        //Instantiate all the backgrounds for the scenes
-        //If using the parallax option the parallax backgrounds are spawned
-        if (useParallax)
+        // Nếu không có background nào đang hoạt động -> mặc định chọn scene 1
+        if (activeBackground == null || activeBackground.Length == 0)
         {
-            for (int i = backgroundsParallax.Length - 1; i > -1; i--)
+            activeBackground = new GameObject[1];
+        }
+
+        // Nếu phần tử đầu null hoặc không tồn tại thì tạo lại background 1
+        if (activeBackground[0] == null)
+        {
+            menuBar.SetActive(false);
+            mainMenu = false;
+
+            if (useParallax)
             {
-                var bck = Instantiate(backgroundsParallax[i]) as GameObject;
+                // Dự phòng nếu mảng chưa được khởi tạo
+                if (backgroundsParallax == null || backgroundsParallax.Length == 0)
+                    return;
+
+                var bck = Instantiate(backgroundsParallax[0]) as GameObject;
                 var rect = bck.GetComponent<RectTransform>();
                 bck.transform.SetParent(backgroundsController.transform);
                 bck.transform.localScale = Vector3.one;
                 bck.transform.localPosition = Vector3.zero;
                 bck.transform.SetSiblingIndex(0);
-                var thisRect = gameObject.GetComponent<RectTransform>();
-                rect.offsetMax = new Vector2((thisRect.rect.width * i), 0);
-                rect.offsetMin = new Vector2(thisRect.rect.width * i, 0);
-                activeBackground[i] = bck;
-                menuBar.SetActive(false);
-                mainMenu = false;
-            }
 
-            //If not, we spawn the normal backgrounds
+                var thisRect = gameObject.GetComponent<RectTransform>();
+                rect.offsetMax = new Vector2(0, 0);
+                rect.offsetMin = new Vector2(0, 0);
+
+                activeBackground[0] = bck;
+            }
+            else
+            {
+                if (backgrounds == null || backgrounds.Length == 0)
+                    return;
+
+                var bck = Instantiate(backgrounds[0]) as GameObject;
+                var rect = bck.GetComponent<RectTransform>();
+                bck.transform.SetParent(backgroundsController.transform);
+                bck.transform.localScale = Vector3.one;
+                bck.transform.localPosition = Vector3.zero;
+                bck.transform.SetSiblingIndex(0);
+
+                var thisRect = gameObject.GetComponent<RectTransform>();
+                rect.offsetMax = new Vector2(0, 0);
+                rect.offsetMin = new Vector2(0, 0);
+
+                activeBackground[0] = bck;
+            }
         }
         else
         {
-            for (int i = backgrounds.Length - 1; i > -1; i--)
+            // Nếu có sẵn background, tiếp tục xử lý như ban đầu
+            Destroy(activeBackground[0]);
+
+            if (useParallax)
             {
-                var bck = Instantiate(backgrounds[i]) as GameObject;
-                var rect = bck.GetComponent<RectTransform>();
-                bck.transform.SetParent(backgroundsController.transform);
-                bck.transform.localScale = Vector3.one;
-                bck.transform.localPosition = Vector3.zero;
-                bck.transform.SetSiblingIndex(0);
-                var thisRect = gameObject.GetComponent<RectTransform>();
-                rect.offsetMax = new Vector2((thisRect.rect.width * i), 0);
-                rect.offsetMin = new Vector2(thisRect.rect.width * i, 0);
-                activeBackground[i] = bck;
-                menuBar.SetActive(false);
-                mainMenu = false;
+                for (int i = backgroundsParallax.Length - 1; i > -1; i--)
+                {
+                    var bck = Instantiate(backgroundsParallax[i]) as GameObject;
+                    var rect = bck.GetComponent<RectTransform>();
+                    bck.transform.SetParent(backgroundsController.transform);
+                    bck.transform.localScale = Vector3.one;
+                    bck.transform.localPosition = Vector3.zero;
+                    bck.transform.SetSiblingIndex(0);
+                    var thisRect = gameObject.GetComponent<RectTransform>();
+                    rect.offsetMax = new Vector2((thisRect.rect.width * i), 0);
+                    rect.offsetMin = new Vector2(thisRect.rect.width * i, 0);
+                    activeBackground[i] = bck;
+                    menuBar.SetActive(false);
+                    mainMenu = false;
+                }
+            }
+            else
+            {
+                for (int i = backgrounds.Length - 1; i > -1; i--)
+                {
+                    var bck = Instantiate(backgrounds[i]) as GameObject;
+                    var rect = bck.GetComponent<RectTransform>();
+                    bck.transform.SetParent(backgroundsController.transform);
+                    bck.transform.localScale = Vector3.one;
+                    bck.transform.localPosition = Vector3.zero;
+                    bck.transform.SetSiblingIndex(0);
+                    var thisRect = gameObject.GetComponent<RectTransform>();
+                    rect.offsetMax = new Vector2((thisRect.rect.width * i), 0);
+                    rect.offsetMin = new Vector2(thisRect.rect.width * i, 0);
+                    activeBackground[i] = bck;
+                    menuBar.SetActive(false);
+                    mainMenu = false;
+                }
             }
         }
     }
