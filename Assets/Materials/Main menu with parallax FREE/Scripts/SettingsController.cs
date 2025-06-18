@@ -15,90 +15,62 @@ public class SettingsController : MonoBehaviour
     public Resolution[] resolutions;
     public Settings gameSettings;
 
+    private string settingsPath;
 
     void OnEnable()
     {
-        gameSettings = new Settings();
+        settingsPath = Application.persistentDataPath + "/gamesettings.json";
         fullscreenToggle.onValueChanged.AddListener(delegate { FullscreenToggle(); });
-        resolutionDrop.onValueChanged.AddListener(delegate { ResolutionChange(); });
-        textQualityDrop.onValueChanged.AddListener(delegate { TextQChange(); });
-        antialiasingDrop.onValueChanged.AddListener(delegate { AntialiasingChange(); });
-        vSyncDrop.onValueChanged.AddListener(delegate { VsyncChange(); });
         volume.onValueChanged.AddListener(delegate { VolumeChange(); });
         saveButton.onClick.AddListener(delegate { saveSettings(); });
-
-        resolutions = Screen.resolutions;
-        foreach (Resolution resolution in resolutions)
-        {
-            resolutionDrop.options.Add(new Dropdown.OptionData(resolution.ToString()));
-        }
-
         loadSettings();
     }
 
     public void FullscreenToggle()
     {
-        gameSettings.fullscreen = Screen.fullScreen = fullscreenToggle.isOn;
-    }
-
-    public void ResolutionChange()
-    {
-        Screen.SetResolution(resolutions[resolutionDrop.value].width, resolutions[resolutionDrop.value].height, Screen.fullScreen, resolutions[resolutionDrop.value].refreshRate);
-        gameSettings.resolutionIndex = resolutionDrop.value;
-    }
-
-    public void AntialiasingChange()
-    {
-        QualitySettings.antiAliasing = gameSettings.antialiasing = (int)Mathf.Pow(2, antialiasingDrop.value);
-    }
-
-    public void VsyncChange()
-    {
-        QualitySettings.vSyncCount = gameSettings.vSync = vSyncDrop.value;
-    }
-
-    public void TextQChange()
-    {
-        gameSettings.textureQuality = QualitySettings.globalTextureMipmapLimit = textQualityDrop.value;
+        gameSettings.fullscreen = fullscreenToggle.isOn;
+        Screen.fullScreen = fullscreenToggle.isOn;
     }
 
     public void VolumeChange()
     {
-        gameSettings.volume = AudioListener.volume = volume.value;
+        gameSettings.volume = volume.value;
+        AudioListener.volume = volume.value;
     }
 
     public void saveSettings()
     {
         string jsonData = JsonUtility.ToJson(gameSettings, true);
-        File.WriteAllText(Application.persistentDataPath + "/gamesettings.json", jsonData);
+        File.WriteAllText(settingsPath, jsonData);
         MenuController.instance.closeOptions();
     }
 
     public void loadSettings()
     {
-        string path = Application.persistentDataPath + "/gamesettings.json";
-
-        if (File.Exists(path))
+        if (File.Exists(settingsPath))
         {
-            gameSettings = JsonUtility.FromJson<Settings>(File.ReadAllText(path));
-            fullscreenToggle.isOn = gameSettings.fullscreen;
-            resolutionDrop.value = gameSettings.resolutionIndex;
-            antialiasingDrop.value = gameSettings.antialiasing;
-            vSyncDrop.value = gameSettings.vSync;
-            textQualityDrop.value = gameSettings.textureQuality;
-            volume.value = gameSettings.volume;
-            resolutionDrop.RefreshShownValue();
+            try
+            {
+                string json = File.ReadAllText(settingsPath);
+                gameSettings = JsonUtility.FromJson<Settings>(json);
+            }
+            catch
+            {
+                Debug.LogWarning("Lỗi đọc file cài đặt. Sử dụng mặc định.");
+                gameSettings = new Settings();
+            }
         }
         else
         {
-            Debug.LogWarning("Settings file not found, using default values.");
-            // Gán giá trị mặc định nếu cần
-            fullscreenToggle.isOn = Screen.fullScreen;
-            resolutionDrop.value = 0;
-            antialiasingDrop.value = 0;
-            vSyncDrop.value = 0;
-            textQualityDrop.value = 0;
-            volume.value = AudioListener.volume;
+            Debug.Log("Chưa có file cài đặt. Tạo mới.");
+            gameSettings = new Settings();
         }
+
+        // Gán lại UI từ giá trị settings
+        fullscreenToggle.isOn = gameSettings.fullscreen;
+        volume.value = gameSettings.volume;
+        // Áp dụng settings
+        FullscreenToggle();
+        VolumeChange();
     }
 }
