@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Assets.Materials.Main_menu_with_parallax_FREE.Scripts;
 using System.Collections;
-using UnityEngine.UI;
 using System.Collections.Generic;
-using UnityEngine.Events;
 using System.IO;
+using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
@@ -84,9 +85,38 @@ public class MenuController : MonoBehaviour
     {
         Audio = gameObject.GetComponent<AudioSource>();
         instance = this;
-        //Set the activeBackground array length
-        if (useParallax) { activeBackground = new GameObject[backgroundsParallax.Length]; } else { activeBackground = new GameObject[backgrounds.Length]; }
+        if (useParallax)
+        {
+            activeBackground = new GameObject[backgroundsParallax.Length];
+        }
+        else
+        {
+            activeBackground = new GameObject[backgrounds.Length];
+        }
+
+        if (!SaveSystem.HasSave())
+        {
+            // Disable nút Continue nếu không có file save
+            Events[1] = new UnityEvent(); // Giả sử Continue là options[1]
+        }
+
+        if (SaveSystem.HasSave())
+        {
+            // Hiện một panel "Bạn có muốn tiếp tục không?"
+            // Nếu người chơi chọn "Tiếp tục" thì gọi `continueGame()`
+            // Nếu không thì gọi `newGame()` hoặc để họ chọn trên menu
+        }   
+
         initiate();
+    }
+    public void ExitToMainMenu()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        Vector3 playerPosition = Vector3.zero; 
+
+        SaveSystem.SaveGame(currentSceneIndex, currentSceneName, playerPosition);
+        SceneManager.LoadScene("Main Menu"); // Tên hoặc index scene menu chính
     }
 
     void Update()
@@ -94,11 +124,7 @@ public class MenuController : MonoBehaviour
 
         if (mainMenu)
         {
-            //Changes the text corresponding option
             menuText.text = options[option];
-
-            //Deactivate arrows
-            //If the option is less than 1 left arrow deactivated
             if (option < 1)
             {
                 ArrowL.SetBool("Deactivate", true);
@@ -108,7 +134,6 @@ public class MenuController : MonoBehaviour
                 ArrowL.SetBool("Deactivate", false);
             }
 
-            //If the option is the last option deactivate right arrow
             if (option == options.Length - 1)
             {
                 ArrowR.SetBool("Deactivate", true);
@@ -118,7 +143,6 @@ public class MenuController : MonoBehaviour
                 ArrowR.SetBool("Deactivate", false);
             }
 
-            //If use keys is active move with the keys pressed
             if (useKeys)
             {
                 if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -131,15 +155,17 @@ public class MenuController : MonoBehaviour
                     moveLeft();
                 }
 
-                //If enter is pressed reproduce the corresponding event
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
                     pressEnter();
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                ExitToMainMenu();
+            }
         }
 
-        //Check is the scenes are animating and puts the variable in true or false
         var anim = backgroundsController.GetComponent<Animation>();
         if (anim.isPlaying)
         {
@@ -153,20 +179,14 @@ public class MenuController : MonoBehaviour
 
     }
 
-    //Initiate
     private void initiate()
     {
-        //If use parallax is active then instantiate the parallax main bck
-        //Else instantiate the normal background
+
         mainMenu = true;
         menuBar.SetActive(true);
         if (useParallax)
         {
-            //Instantiate the background an set the parent to this gameobject
-            //Then reset the scale and position
-            //Set the sibling to first so the background is visible
-            //Then adjust the rect values
-            //And lastly set the active background array position 0 to this background
+
             var Bck = Instantiate(mainBackgroundParallax) as GameObject;
             Bck.transform.SetParent(this.gameObject.transform);
             Bck.transform.localScale = new Vector3(1, 1, 1);
@@ -179,11 +199,6 @@ public class MenuController : MonoBehaviour
         }
         else
         {
-            //Instantiate the background an set the parent to this gameobject
-            //Then reset the scale and position
-            //Set the sibling to first so the background is visible
-            //Then adjust the rect values
-            //And lastly set the active background array position 0 to this background
             var Bck = Instantiate(mainBackground) as GameObject;
             Bck.transform.SetParent(this.gameObject.transform);
             var rect = Bck.GetComponent<RectTransform>();
@@ -229,17 +244,25 @@ public class MenuController : MonoBehaviour
     //New Game event
     public void newGame()
     {
-        //Loads the first scene, change the number to your desired scene
+
         SceneManager.LoadScene(1);
     }
 
     //Continue
     public void continueGame()
     {
-        //In this part you need to include your save game script to implement the continue function
+        var data = SaveSystem.LoadGame();
+        if (data != null)
+        {
+            SceneManager.LoadScene(data.currentSceneIndex);
+        }
+        else
+        {
+            Debug.LogWarning("No save found. Starting new game.");
+            newGame(); // Hoặc disable nút continue
+        }
     }
 
-    //Select scene Event
     public void selectScene()
     {
         // Nếu không có background nào đang hoạt động -> mặc định chọn scene 1
