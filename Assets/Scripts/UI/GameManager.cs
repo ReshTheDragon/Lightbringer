@@ -1,11 +1,12 @@
-using UnityEngine;
-
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameUi;
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject gameOverMenu;
     [SerializeField] private GameObject pauseMenu;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
         mainMenu.SetActive(false);
         pauseMenu.SetActive(false);
         gameOverMenu.SetActive(false);
+        SceneManager.LoadScene(1);
         Time.timeScale = 1f; // Resume the game when starting
     }
     public void ResumeGame()

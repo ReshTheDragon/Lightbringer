@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
     public float moveSpeed = 5f;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-
+    private GameUi gameUi;
+    private bool isPauseMenuLoaded = false;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -14,6 +16,15 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPauseMenuLoaded)
+            {
+                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
+                Time.timeScale = 0f; // Dừng game
+                isPauseMenuLoaded = true;
+            }
+        }
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
