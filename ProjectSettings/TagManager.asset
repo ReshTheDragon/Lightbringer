@@ -47,9 +47,6 @@ TagManager:
   - name: Wall
     uniqueID: 3358063733
     locked: 0
-  - name: SolidObject
-    uniqueID: 848066185
-    locked: 0
   - name: Decoration
     uniqueID: 73789439
     locked: 0
@@ -58,6 +55,15 @@ TagManager:
     locked: 0
   - name: 'Pillar '
     uniqueID: 4292597851
+    locked: 0
+  - name: SolidObject
+    uniqueID: 848066185
+    locked: 0
+  - name: Interaction
+    uniqueID: 4107137591
+    locked: 0
+  - name: Dialog
+    uniqueID: 3192392143
     locked: 0
   m_RenderingLayers:
   - Default
