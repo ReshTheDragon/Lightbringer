@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class EnemyFollow : MonoBehaviour
 {
@@ -7,10 +8,22 @@ public class EnemyFollow : MonoBehaviour
     public float chaseRadius = 5f;
 
     private bool isCollidingWithPlayer = false;
+    private Animator animator;
+    private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
+    private int hitCount = 0;
+    private bool isDying = false;
 
-    private void Update()
+    void Start()
     {
-        if (player == null || isCollidingWithPlayer) return;
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void Update()
+    {
+        if (player == null || isCollidingWithPlayer || isDying) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
 
@@ -21,22 +34,38 @@ public class EnemyFollow : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void TakeHit(Vector3 attackerPos, float force)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (isDying) return;
+
+        hitCount++;
+        Debug.Log("Enemy hit! Count: " + hitCount);
+
+        // Tính vector đẩy lùi
+        Vector2 knockbackDir = (transform.position - attackerPos).normalized;
+        rb.AddForce(knockbackDir * force, ForceMode2D.Impulse);
+
+        if (hitCount >= 4)
         {
-            isCollidingWithPlayer = true;
-            Debug.Log("Enemy touched player — stop moving.");
+            StartCoroutine(FlashAndDie());
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    IEnumerator FlashAndDie()
     {
-        if (collision.gameObject.CompareTag("Player"))
+        isDying = true;
+        float flashDuration = 0.5f;
+        float flashSpeed = 0.1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < flashDuration)
         {
-            isCollidingWithPlayer = false;
-            Debug.Log("Enemy left player — resume moving.");
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(flashSpeed);
+            elapsedTime += flashSpeed;
         }
+
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
