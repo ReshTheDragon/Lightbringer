@@ -26,10 +26,11 @@ public class PlayerControl : MonoBehaviour
             if (!isPauseMenuLoaded)
             {
                 SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
-                Time.timeScale = 0f; // Dừng game
+                Time.timeScale = 0f;
                 isPauseMenuLoaded = true;
             }
         }
+
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
@@ -44,12 +45,21 @@ public class PlayerControl : MonoBehaviour
         else if (moveX < 0)
             spriteRenderer.flipX = true;
 
+        // 👉 Flip attack point theo hướng nhân vật
+        if (attackPoint != null)
+        {
+            Vector3 localPos = attackPoint.localPosition;
+            localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1 : 1);
+            attackPoint.localPosition = localPos;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             animator.SetTrigger("IsAttacking");
             Attack();
         }
     }
+
 
     void Attack()
     {
