@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Chest
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -15,8 +16,8 @@ TagManager:
   - Enemy
   - 
   - 
-  - 
-  - 
+  - Boss
+  - 'Player '
   - 
   - 
   - 
@@ -42,8 +43,29 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Floor
+    uniqueID: 951285559
+    locked: 0
+  - name: Wall
+    uniqueID: 3358063733
+    locked: 0
+  - name: Decoration
+    uniqueID: 73789439
+    locked: 0
   - name: Player
-    uniqueID: 1962344933
+    uniqueID: 2267294003
+    locked: 0
+  - name: 'Pillar '
+    uniqueID: 4292597851
+    locked: 0
+  - name: SolidObject
+    uniqueID: 848066185
+    locked: 0
+  - name: Interaction
+    uniqueID: 4107137591
+    locked: 0
+  - name: Dialog
+    uniqueID: 3192392143
     locked: 0
   - name: MainMenu
     uniqueID: 7408617
@@ -53,3 +75,7 @@ TagManager:
     locked: 0
   m_RenderingLayers:
   - Default
+  - Floor
+  - Wall
+  - Object
+  - Player
