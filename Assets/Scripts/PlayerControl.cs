@@ -11,25 +11,54 @@ public class PlayerControl : MonoBehaviour
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-    private GameUi gameUi;
+
+    public float maxStamina = 100f;
+    private float currentStamina;
+
+    private PlayerHUDController hudController;
+
     private bool isPauseMenuLoaded = false;
+
+    public GameObject projectilePrefab;  // Prefab viên chưởng
+    public Transform chargePoint;        // Vị trí bắn chưởng
+
+    public float maxMana = 100f;
+    private float currentMana;
+
+    private bool isCharging = false;
+
+
     void Start()
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Stamina khởi tạo
+        currentStamina = maxStamina;
+
+        // Tìm HUD Controller
+        hudController = FindObjectOfType<PlayerHUDController>();
+
+        // Cập nhật UI ban đầu
+        hudController.UpdateStamina(currentStamina / maxStamina);
+
+        currentMana = maxMana;
+        hudController.UpdateMana(currentMana / maxMana);
+
     }
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    if (!isPauseMenuLoaded)
-        //    {
-        //        SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
-        //        Time.timeScale = 0f; // Dừng game
-        //        isPauseMenuLoaded = true;
-        //    }
-        //}
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPauseMenuLoaded)
+            {
+                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
+                Time.timeScale = 0f;
+                isPauseMenuLoaded = true;
+            }
+        }
+
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
@@ -44,29 +73,150 @@ public class PlayerControl : MonoBehaviour
         else if (moveX < 0)
             spriteRenderer.flipX = true;
 
+        if (attackPoint != null)
+        {
+            Vector3 localPos = attackPoint.localPosition;
+            localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1 : 1);
+            attackPoint.localPosition = localPos;
+        }
+
+        // Kiểm tra stamina đủ mới cho đánh
         if (Input.GetMouseButtonDown(0))
         {
-            animator.SetTrigger("IsAttacking");
-            Attack();
+            if (currentStamina >= 15f)
+            {
+                animator.SetTrigger("IsAttacking");
+                Attack();
+
+                // Trừ stamina
+                currentStamina -= 15f;
+                if (currentStamina < 0) currentStamina = 0;
+
+                // Update UI
+                hudController.UpdateStamina(currentStamina / maxStamina);
+            }
+            else
+            {
+                Debug.Log("Not enough stamina!");
+            }
         }
+
+        // Hồi stamina từ từ mỗi frame
+        if (currentStamina < maxStamina)
+        {
+            currentStamina += 5f * Time.deltaTime;  // tốc độ hồi 5/s
+            if (currentStamina > maxStamina) currentStamina = maxStamina;
+
+            hudController.UpdateStamina(currentStamina / maxStamina);
+        }
+
+
+        // Bắt đầu giữ chuột phải để charge
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (currentMana > 0)
+            {
+                isCharging = true;
+                animator.SetBool("IsCharging", true); // nếu có animation charge thì kích hoạt
+            }
+            else
+            {
+                Debug.Log("Not enough mana to start charging!");
+            }
+        }
+
+        // Đang giữ để charge
+        if (Input.GetMouseButton(1) && isCharging)
+        {
+            // Tốn mana dần theo thời gian
+            currentMana -= 30f * Time.deltaTime;
+            if (currentMana <= 0)
+            {
+                currentMana = 0;
+                isCharging = false;
+                animator.SetBool("IsCharging", false);
+                Debug.Log("Out of mana while charging!");
+            }
+
+            // Update UI
+            hudController.UpdateMana(currentMana / maxMana);
+        }
+
+        // Nhả chuột phải để bắn
+        if (Input.GetMouseButtonUp(1) && isCharging)
+        {
+            ShootSkill();
+            isCharging = false;
+            animator.SetBool("IsCharging", false);
+        }
+
+        if (currentMana < maxMana)
+        {
+            currentMana += 5f * Time.deltaTime;
+            if (currentMana > maxMana) currentMana = maxMana;
+
+            hudController.UpdateMana(currentMana / maxMana);
+        }
+
+        if (attackPoint != null)
+        {
+            Vector3 localPos = attackPoint.localPosition;
+            localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1 : 1);
+            attackPoint.localPosition = localPos;
+        }
+
+        if (chargePoint != null)
+        {
+            Vector3 chargeLocalPos = chargePoint.localPosition;
+            chargeLocalPos.x = Mathf.Abs(chargeLocalPos.x) * (spriteRenderer.flipX ? -1 : 1);
+            chargePoint.localPosition = chargeLocalPos;
+        }
+
+
     }
 
     void Attack()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
-
         foreach (Collider2D enemy in hitEnemies)
         {
-            // Gọi hàm TakeHit trong enemy
-            enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce);
+            enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce, 25f);
         }
     }
 
     void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;
-
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
+
+    void ShootSkill()
+    {
+        if (currentMana >= 15f)
+        {
+            // Tạo chưởng
+            GameObject proj = Instantiate(projectilePrefab, chargePoint.position, Quaternion.identity);
+
+            // Tính hướng bắn về phía chuột
+            Vector2 shootDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - chargePoint.position).normalized;
+
+            // Gán vận tốc
+            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
+            rb.linearVelocity = shootDir * 10f;
+
+            // Trừ mana
+            currentMana -= 15f;
+            if (currentMana < 0) currentMana = 0;
+            hudController.UpdateMana(currentMana / maxMana);
+
+            Debug.Log("Skill fired!");
+        }
+        else
+        {
+            Debug.Log("Not enough mana to shoot!");
+        }
+    }
+
+
 }
