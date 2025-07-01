@@ -36742,6 +36742,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 576
   attackPoint: {fileID: 1515922279}
+  maxStamina: 100
+  projectilePrefab: {fileID: 0}
+  chargePoint: {fileID: 0}
+  maxMana: 100
 --- !u!1 &1458941370
 GameObject:
   m_ObjectHideFlags: 0
@@ -37145,7 +37149,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.781487, y: 1.6635125, z: 0}
-  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_LocalScale: {x: 9, y: 9, z: 9}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
