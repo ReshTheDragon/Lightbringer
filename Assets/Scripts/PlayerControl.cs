@@ -49,6 +49,11 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
+        if (InventoryManager.isInventoryOpen)
+        {
+            return; // Don't process any input if inventory is open
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!isPauseMenuLoaded)
@@ -83,13 +88,13 @@ public class PlayerControl : MonoBehaviour
         // Kiểm tra stamina đủ mới cho đánh
         if (Input.GetMouseButtonDown(0))
         {
-            if (currentStamina >= 15f)
+            if (currentStamina >= 17f)
             {
                 animator.SetTrigger("IsAttacking");
                 Attack();
 
                 // Trừ stamina
-                currentStamina -= 15f;
+                currentStamina -= 17f;
                 if (currentStamina < 0) currentStamina = 0;
 
                 // Update UI
@@ -104,7 +109,7 @@ public class PlayerControl : MonoBehaviour
         // Hồi stamina từ từ mỗi frame
         if (currentStamina < maxStamina)
         {
-            currentStamina += 5f * Time.deltaTime;  // tốc độ hồi 5/s
+            currentStamina += 1f * Time.deltaTime;  // tốc độ hồi 5/s
             if (currentStamina > maxStamina) currentStamina = maxStamina;
 
             hudController.UpdateStamina(currentStamina / maxStamina);
@@ -125,22 +130,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        // Đang giữ để charge
-        if (Input.GetMouseButton(1) && isCharging)
-        {
-            // Tốn mana dần theo thời gian
-            currentMana -= 30f * Time.deltaTime;
-            if (currentMana <= 0)
-            {
-                currentMana = 0;
-                isCharging = false;
-                animator.SetBool("IsCharging", false);
-                Debug.Log("Out of mana while charging!");
-            }
-
-            // Update UI
-            hudController.UpdateMana(currentMana / maxMana);
-        }
+        
 
         // Nhả chuột phải để bắn
         if (Input.GetMouseButtonUp(1) && isCharging)
@@ -152,7 +142,7 @@ public class PlayerControl : MonoBehaviour
 
         if (currentMana < maxMana)
         {
-            currentMana += 5f * Time.deltaTime;
+            currentMana += 1f * Time.deltaTime;
             if (currentMana > maxMana) currentMana = maxMana;
 
             hudController.UpdateMana(currentMana / maxMana);
@@ -172,7 +162,19 @@ public class PlayerControl : MonoBehaviour
             chargePoint.localPosition = chargeLocalPos;
         }
 
+        // Use hotbar items
+        for (int i = 0; i < 5; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                UseHotbarItem(i);
+            }
+        }
+    }
 
+    void UseHotbarItem(int index)
+    {
+        InventoryManager.Instance.UseItemFromHotbar(index);
     }
 
     void Attack()
@@ -193,7 +195,7 @@ public class PlayerControl : MonoBehaviour
 
     void ShootSkill()
     {
-        if (currentMana >= 15f)
+        if (currentMana >= 17f)
         {
             // Tạo chưởng
             GameObject proj = Instantiate(projectilePrefab, chargePoint.position, Quaternion.identity);
@@ -203,10 +205,10 @@ public class PlayerControl : MonoBehaviour
 
             // Gán vận tốc
             Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = shootDir * 10f;
+            rb.linearVelocity = shootDir * 25f;
 
             // Trừ mana
-            currentMana -= 15f;
+            currentMana -= 17f;
             if (currentMana < 0) currentMana = 0;
             hudController.UpdateMana(currentMana / maxMana);
 
@@ -218,5 +220,20 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    public void RestoreMana(float amount)
+    {
+        currentMana += amount;
+        if (currentMana > maxMana) currentMana = maxMana;
+        hudController.UpdateMana(currentMana / maxMana);
+        Debug.Log("Đã hồi " + amount + " mana");
+    }
+
+    public void RestoreStamina(float amount)
+    {
+        currentStamina += amount;
+        if (currentStamina > maxStamina) currentStamina = maxStamina;
+        hudController.UpdateStamina(currentStamina / maxStamina);
+        Debug.Log("Đã hồi " + amount + " stamina");
+    }
 
 }
