@@ -231,19 +231,6 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.HealthPotion:
-                player.RestoreHealth(20f);
-                slot.quantity--;
-                if (slot.quantity <= 0)
-                {
-                    slot.ClearSlot();
-                }
-                else
-                {
-                    slot.quantityText.text = slot.quantity.ToString();
-                }
-                break;
-
             default:
                 Debug.Log("Item không sử dụng được.");
                 break;

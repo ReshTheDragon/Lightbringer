@@ -25,9 +25,6 @@ public class PlayerControl : MonoBehaviour
     public float maxMana = 100f;
     private float currentMana;
 
-    public float maxHealth = 100f;
-    private float currentHealth;
-
     private bool isCharging = false;
 
 
@@ -35,9 +32,6 @@ public class PlayerControl : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // Khởi tạo máu
-        currentHealth = maxHealth;
 
         // Stamina khởi tạo
         currentStamina = maxStamina;
@@ -50,8 +44,6 @@ public class PlayerControl : MonoBehaviour
 
         currentMana = maxMana;
         hudController.UpdateMana(currentMana / maxMana);
-
-        hudController.UpdateHealth(currentHealth / maxHealth);
 
     }
 
@@ -242,40 +234,6 @@ public class PlayerControl : MonoBehaviour
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         hudController.UpdateStamina(currentStamina / maxStamina);
         Debug.Log("Đã hồi " + amount + " stamina");
-    }
-
-    public void RestoreHealth(float amount)
-    {
-        currentHealth += amount;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-        hudController.UpdateHealth(currentHealth / maxHealth);
-        Debug.Log("Đã hồi " + amount + " máu");
-    }
-
-    public void TakeDamage(float damage)
-    {
-        if (currentHealth <= 0) return;
-
-        currentHealth -= damage;
-        if (currentHealth < 0) currentHealth = 0;
-
-        // Cập nhật UI
-        hudController.UpdateHealth(currentHealth / maxHealth);
-        Debug.Log("Player took " + damage + " damage. Current health: " + currentHealth);
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
-
-    void Die()
-    {
-        Debug.Log("Player died!");
-        // Thêm logic khi người chơi chết, ví dụ:
-        animator.SetTrigger("IsDead"); // Nếu có animation chết
-        // Hoặc tải lại scene, vô hiệu hóa điều khiển, v.v.
-        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 }

@@ -7,14 +7,10 @@ public class EnemyFollow : MonoBehaviour
     public Transform player;
     public float speed = 2f;
     public float chaseRadius = 5f;
-    public float attackDamage = 10f; // Damage dealt per hit
-    public float attackCooldown = 1f; // Cooldown between attacks
-    private float lastAttackTime; // Time when the last attack occurred
 
     public GameObject healthBarPrefab; // Prefab thanh máu
 
     private bool isCollidingWithPlayer = false;
-    private bool isPlayerInAttackRange = false;
     private Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -35,8 +31,6 @@ public class EnemyFollow : MonoBehaviour
         // Khởi tạo máu
         currentHealth = maxHealth;
 
-        lastAttackTime = -attackCooldown; // Allow immediate attack
-
         // Tạo thanh máu và gán vào enemy
         healthBarInstance = Instantiate(healthBarPrefab, transform.position + Vector3.up * 1.2f, Quaternion.identity);
         healthBarInstance.transform.SetParent(transform);
@@ -47,7 +41,7 @@ public class EnemyFollow : MonoBehaviour
 
     void Update()
     {
-        if (player == null || isDying) return;
+        if (player == null || isCollidingWithPlayer || isDying) return;
 
         // Tính khoảng cách và di chuyển enemy
         float distance = Vector2.Distance(transform.position, player.position);
@@ -62,23 +56,6 @@ public class EnemyFollow : MonoBehaviour
         if (healthBarInstance != null)
         {
             healthBarInstance.transform.position = transform.position + Vector3.up * 1.2f;
-        }
-
-        // Attack player if in range and cooldown is over
-        if (isPlayerInAttackRange && Time.time >= lastAttackTime + attackCooldown)
-        {
-            AttackPlayer();
-        }
-    }
-
-    void AttackPlayer()
-    {
-        PlayerControl playerControl = player.GetComponent<PlayerControl>();
-        if (playerControl != null)
-        {
-            playerControl.TakeDamage(attackDamage);
-            lastAttackTime = Time.time;
-            Debug.Log($"Enemy attacked player for {attackDamage} damage.");
         }
     }
 
@@ -105,22 +82,25 @@ public class EnemyFollow : MonoBehaviour
         }
     }
 
+
     IEnumerator FlashAndDie()
     {
         isDying = true;
-        GetComponent<Collider2D>().enabled = false;
-        rb.linearVelocity = Vector2.zero;
-        rb.isKinematic = true;
+        float flashDuration = 0.5f;
+        float flashSpeed = 0.1f;
+        float elapsedTime = 0f;
 
-        animator.SetTrigger("IsDead");
+        // Nhấp nháy trước khi chết
+        while (elapsedTime < flashDuration)
+        {
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(flashSpeed);
+            elapsedTime += flashSpeed;
+        }
 
-        // Chờ animation chết chạy xong (hoặc đơn giản delay 1 giây)
-        yield return new WaitForSeconds(1f);
-
-        Destroy(healthBarInstance);
-        Destroy(gameObject);
+        Destroy(healthBarInstance); // Xóa thanh máu
+        Destroy(gameObject);        // Xóa enemy
     }
-
 
     private void OnDrawGizmosSelected()
     {
@@ -135,19 +115,8 @@ public class EnemyFollow : MonoBehaviour
             // Mất 20% máu
             float damage = maxHealth * 0.2f;
             TakeHit(collision.transform.position, 0f, damage);  // 0 force vì chưởng không đẩy lùi
-            Destroy(collision.gameObject);  // Xóa projectile sau khi chạm
-        }
-        else if (collision.CompareTag("Player") && !isDying)
-        {
-            isPlayerInAttackRange = true;
-        }
-    }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            isPlayerInAttackRange = false;
+            Destroy(collision.gameObject);  // Xóa projectile sau khi chạm
         }
     }
 

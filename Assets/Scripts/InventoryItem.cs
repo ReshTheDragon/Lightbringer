@@ -4,7 +4,6 @@ public enum ItemType
 {
     ManaPotion,
     StaminaPotion,
-    HealthPotion,
     Other
 }
 
