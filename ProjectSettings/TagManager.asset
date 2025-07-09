@@ -55,6 +55,9 @@ TagManager:
   - name: Player
     uniqueID: 2267294003
     locked: 0
+  - name: Boss
+    uniqueID: 4214783575
+    locked: 0
   - name: 'Pillar '
     uniqueID: 4292597851
     locked: 0

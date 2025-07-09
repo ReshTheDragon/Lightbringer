@@ -43,7 +43,7 @@ public class PlayerControl : MonoBehaviour
         currentStamina = maxStamina;
 
         // Tìm HUD Controller
-        hudController = FindObjectOfType<PlayerHUDController>();
+        hudController = FindAnyObjectByType<PlayerHUDController>();
 
         // Cập nhật UI ban đầu
         hudController.UpdateStamina(currentStamina / maxStamina);
