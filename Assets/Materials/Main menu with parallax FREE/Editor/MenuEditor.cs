@@ -23,10 +23,7 @@ public class MenuEditor : Editor {
                 EditorGUILayout.HelpBox("If deactivated the menu will only use the ingame arrows.", MessageType.Info);
                 serializedObject.Update();
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("mainBackground"), true);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("backgrounds"),true);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("options"), true);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("Select"), true);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("SceneSelect"), true);
                 EditorGUILayout.HelpBox("The audio that will be played in the menu.", MessageType.Info);
                 serializedObject.ApplyModifiedProperties();
                 break;
@@ -39,8 +36,6 @@ public class MenuEditor : Editor {
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("mainBackgroundParallax"), true);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("backgroundsParallax"), true);            
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("options"), true);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("Select"), true);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("SceneSelect"), true);
                 EditorGUILayout.HelpBox("The audio that will be played in the menu.", MessageType.Info);
                 serializedObject.ApplyModifiedProperties();
                 break;
