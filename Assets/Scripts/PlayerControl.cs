@@ -218,5 +218,23 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+<<<<<<< HEAD
+=======
+    public void RestoreMana(float amount)
+    {
+        currentMana += amount;
+        if (currentMana > maxMana) currentMana = maxMana;
+        hudController.UpdateMana(currentMana / maxMana);
+        Debug.Log("Đã hồi " + amount + " mana");
+    }
+
+    public void RestoreStamina(float amount)
+    {
+        currentStamina += amount;
+        if (currentStamina > maxStamina) currentStamina = maxStamina;
+        hudController.UpdateStamina(currentStamina / maxStamina);
+        Debug.Log("Đã hồi " + amount + " stamina");
+    }
+>>>>>>> parent of 697cf13 (add monster)
 
 }
