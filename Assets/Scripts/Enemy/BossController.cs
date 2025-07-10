@@ -1,213 +1,169 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BossController : MonoBehaviour
 {
     private Vector3 originalScale;
-
-    [SerializeField] protected float enemyMoveSpeed = 1f;
-    [SerializeField] protected PlayerControl player;
-    [SerializeField] protected int maxHp = 500;
-    protected int currentHp; // Đổi từ float sang int để khớp với maxHp
-    [SerializeField] private Image hpBar;
-    [SerializeField] protected int enterDamage = 10;
-    [SerializeField] protected int stayDamage = 1;
-
     private Rigidbody2D rb;
     private Animator animator;
 
-    [Header("Ranged Attack Settings")]
+    [SerializeField] protected PlayerControl player;
+    [SerializeField] private Image hpBar;
+
+    [Header("Stats")]
+    [SerializeField] private int maxHp = 500;
+    [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private int enterDamage = 10;
+    [SerializeField] private int stayDamage = 1;
+
+    private int currentHp;
+
+    [Header("Ranged Attack")]
     public float rangedRange = 5f;
     public float rangedAttackCooldown = 5f;
     public int rangedAttackDamage = 15;
-    private float lastRangedAttackTime;
     public GameObject rangedAttackPrefab;
-    public Transform firePoint;
+    public float spellCastTime = 1.5f;
 
-    [Header("Spell Cooldown")]
-    public float spellCooldown = 2f;
-    private float lastSpellTime;
-    private bool isSpellOnCooldown = false;
-
-    [Header("Cast Animation")]
-    public float castDuration = 1.5f;
     private bool isCasting = false;
+    private bool canCast = true;
 
-    public void Awake()
+    private void Awake()
     {
-        if (hpBar != null)
-        {
-            hpBar.fillAmount = 1f;
-        }
+        if (hpBar != null) hpBar.fillAmount = 1f;
+        currentHp = maxHp;
     }
 
-    protected virtual void Start()
+    private void Start()
     {
-        player = FindAnyObjectByType<PlayerControl>();
-        originalScale = transform.localScale;
-        currentHp = maxHp;
-
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
-        // Debug để kiểm tra
-        Debug.Log($"Boss initialized with HP: {currentHp}/{maxHp}");
+        player = FindAnyObjectByType<PlayerControl>();
+        originalScale = transform.localScale;
     }
 
-    protected virtual void Update()
+    private void Update()
     {
         if (player == null) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
-        float currentTime = Time.time;
+
+        FlipTowardPlayer();
 
         if (!isCasting)
         {
-            Vector3 scale = transform.localScale;
-            if (player.transform.position.x < transform.position.x)
-                scale.x = -Mathf.Abs(scale.x);
+            if (distanceToPlayer > rangedRange && canCast)
+            {
+                StartCoroutine(CastSpell());
+            }
             else
-                scale.x = Mathf.Abs(scale.x);
-            transform.localScale = scale;
-        }
-
-        if (isCasting && currentTime - lastSpellTime >= castDuration)
-        {
-            isCasting = false;
-            animator.SetBool("IsCast", false);
-        }
-
-        if (isSpellOnCooldown && currentTime - lastSpellTime >= spellCooldown)
-        {
-            isSpellOnCooldown = false;
-        }
-
-        if (!isCasting)
-        {
-            MoveToPlayer();
-        }
-        else
-        {
-            animator.SetBool("IsWalking", false);
-        }
-
-        if (distanceToPlayer > rangedRange &&
-            !isSpellOnCooldown &&
-            !isCasting &&
-            currentTime - lastRangedAttackTime >= rangedAttackCooldown)
-        {
-            StartCasting();
-            lastRangedAttackTime = currentTime;
+            {
+                MoveToPlayer();
+            }
         }
     }
 
-    void StartCasting()
+    private void MoveToPlayer()
+    {
+        if (player == null) return;
+
+        animator.SetBool("IsWalking", true);
+        Vector2 target = Vector2.MoveTowards(transform.position, player.transform.position, moveSpeed * Time.deltaTime);
+        rb.MovePosition(target);
+    }
+
+    private void FlipTowardPlayer()
+    {
+        if (player == null) return;
+        float direction = player.transform.position.x > transform.position.x ? 1f : -1f;
+        transform.localScale = new Vector3(originalScale.x * direction, originalScale.y, originalScale.z);
+    }
+
+    private IEnumerator CastSpell()
     {
         isCasting = true;
-        animator.SetBool("IsCast", true);
+        canCast = false;
+
         animator.SetBool("IsWalking", false);
-        lastSpellTime = Time.time;
-        isSpellOnCooldown = true;
+        animator.SetBool("IsCast", true);
 
-        Invoke("RangedAttack", 0.5f);
+        yield return new WaitForSeconds(spellCastTime);
+
+        animator.SetBool("IsCast", false);
+        SpawnSpell();
+
+        yield return new WaitForSeconds(rangedAttackCooldown);
+        canCast = true;
+        isCasting = false;
     }
 
-    void RangedAttack()
+    private void SpawnSpell()
     {
-        Vector3 spellSpawnPosition = new Vector3(player.transform.position.x, player.transform.position.y + 3f, player.transform.position.z);
-        GameObject projectile = Instantiate(rangedAttackPrefab, spellSpawnPosition, Quaternion.identity);
+        if (player == null) return;
 
-        SpellController ranged = projectile.GetComponent<SpellController>();
-        if (ranged != null)
+        Vector3 spawnPos = new Vector3(player.transform.position.x, player.transform.position.y + 3f, 0);
+        GameObject spell = Instantiate(rangedAttackPrefab, spawnPos, Quaternion.identity);
+
+        SpellController sc = spell.GetComponent<SpellController>();
+        if (sc != null)
         {
-            Vector2 downDirection = Vector2.down;
-            ranged.SetDirection(downDirection);
-            ranged.SetDamage(rangedAttackDamage);
+            sc.SetDirection(Vector2.down);
+            sc.SetDamage(rangedAttackDamage);
         }
     }
 
-    protected void MoveToPlayer()
-    {
-        if (player != null)
-        {
-            animator.SetBool("IsWalking", true);
-            transform.position = Vector2.MoveTowards(transform.position, player.transform.position, enemyMoveSpeed * Time.deltaTime);
-            FlipEnemy();
-        }
-        else
-        {
-            Debug.LogWarning("Player is NULL — cannot move.");
-        }
-    }
-
-    protected void FlipEnemy()
-    {
-        if (player != null)
-        {
-            float direction = player.transform.position.x > transform.position.x ? 1f : -1f;
-            transform.localScale = new Vector3(originalScale.x * direction, originalScale.y, originalScale.z);
-        }
-    }
-
-    // Phương thức TakeDamage cũ - chỉ nhận damage
-    public virtual void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         currentHp -= damage;
         currentHp = Mathf.Clamp(currentHp, 0, maxHp);
         UpdateHpBar();
 
-        Debug.Log($"Boss took {damage} damage. Current HP: {currentHp}/{maxHp}");
         if (currentHp <= 0)
         {
-            animator.SetTrigger("IsDie");
             Die();
         }
     }
 
-    // Phương thức TakeDamage mới - nhận thêm knockback (để tương thích với code attack của bạn)
-    public virtual void TakeDamage(Vector2 attackerPosition, float knockbackForce, int damage)
+    public void TakeDamage(Vector2 attackerPos, float knockbackForce, int damage)
     {
-        // Gọi phương thức TakeDamage cũ
         TakeDamage(damage);
 
-        // Thêm knockback nếu cần
-        if (knockbackForce > 0)
+        if (knockbackForce > 0 && rb != null)
         {
-            Vector2 knockbackDirection = (transform.position - (Vector3)attackerPosition).normalized;
-            if (rb != null)
-            {
-                rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-            }
+            Vector2 knockDir = ((Vector2)transform.position - attackerPos).normalized;
+            rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
         }
     }
 
-    public virtual void Die()
+    private void UpdateHpBar()
     {
-        Debug.Log("Boss died.");
-        Destroy(gameObject);
+        if (hpBar != null)
+        {
+            hpBar.fillAmount = (float)currentHp / maxHp;
+        }
+    }
+
+    private void Die()
+    {
+        animator.SetTrigger("IsDie");
+        Destroy(gameObject, 1f);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && player != null)
         {
-            if (player != null)
-            {
-                animator.SetBool("IsAttack", true);
-                player.TakeDamage(enterDamage);
-            }
+            animator.SetBool("IsAttack", true);
+            player.TakeDamage(enterDamage);
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && player != null)
         {
-            if (player != null)
-            {
-                player.TakeDamage(stayDamage);
-            }
+            player.TakeDamage(stayDamage);
         }
     }
 
@@ -216,20 +172,6 @@ public class BossController : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             animator.SetBool("IsAttack", false);
-        }
-    }
-
-    private void UpdateHpBar()
-    {
-        if (hpBar != null)
-        {
-            // Ép kiểu để tránh lỗi chia số
-            hpBar.fillAmount = (float)currentHp / (float)maxHp;
-            Debug.Log($"HP Bar updated: {hpBar.fillAmount} (HP: {currentHp}/{maxHp})");
-        }
-        else
-        {
-            Debug.LogWarning("HP Bar is null!");
         }
     }
 

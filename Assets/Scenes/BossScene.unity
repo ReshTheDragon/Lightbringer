@@ -162,7 +162,7 @@ Transform:
   m_GameObject: {fileID: 64339245}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -34267,7 +34267,7 @@ Transform:
   m_GameObject: {fileID: 70884900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.8, y: 1.6, z: -10}
+  m_LocalPosition: {x: -6.99, y: -0.55, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -34761,7 +34761,7 @@ Transform:
   m_GameObject: {fileID: 495735858}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.8, y: 1.6, z: -10}
+  m_LocalPosition: {x: -6.99, y: -0.55, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -34953,15 +34953,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 495205945644984843, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 264.5
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 495205945644984843, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 701
+      value: 683
       objectReference: {fileID: 0}
     - target: {fileID: 1064360770130903566, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
       propertyPath: m_Name
       value: HpBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 4198082618123481938, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6306006749559260083, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_Color.a
+      value: 0.9882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 6306006749559260083, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6306006749559260083, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_Color.g
+      value: 0.015686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 6306006749559260083, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7985041167451436737, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
       propertyPath: m_Pivot.x
@@ -35078,7 +35098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5872993542605697413, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
       propertyPath: m_Name
@@ -37417,7 +37437,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.05193329, y: -0.64460754}
+  m_Offset: {x: -0.05193329, y: -0.36230046}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -37427,7 +37447,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.91018677, y: 1.1607971}
+  m_Size: {x: 0.91018677, y: 1.7254113}
   m_EdgeRadius: 0
 --- !u!50 &1297724938
 Rigidbody2D:
@@ -37544,7 +37564,7 @@ Transform:
   m_GameObject: {fileID: 1297724935}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.8, y: 1.6, z: 0}
+  m_LocalPosition: {x: -6.99, y: -0.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37953,7 +37973,7 @@ Transform:
   m_GameObject: {fileID: 1616133911}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.781487, y: 1.6635125, z: 0}
+  m_LocalPosition: {x: -10.75, y: -0.31, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37972,19 +37992,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6528410f8cd8f6944a12f0d4666ffe4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyMoveSpeed: 1
   player: {fileID: 1297724939}
-  maxHp: 100
   hpBar: {fileID: 1430965020}
+  maxHp: 100
+  moveSpeed: 5
   enterDamage: 10
   stayDamage: 1
   rangedRange: 10
   rangedAttackCooldown: 5
   rangedAttackDamage: 15
-  rangedAttackPrefab: {fileID: 3760371953639655710, guid: e0f572ee1a37e2448a4f71cad5351790, type: 3}
-  firePoint: {fileID: 5203776417631942649, guid: e0f572ee1a37e2448a4f71cad5351790, type: 3}
-  spellCooldown: 2
-  castDuration: 1.5
+  rangedAttackPrefab: {fileID: 2209176688347403465, guid: 4042a9fe83ae0584aaea2d08da941031, type: 3}
+  spellCastTime: 1.5
 --- !u!58 &1616133916
 CircleCollider2D:
   m_ObjectHideFlags: 0
