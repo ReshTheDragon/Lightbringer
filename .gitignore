@@ -23,3 +23,5 @@ UserSettings/
 *.dwlt
 UserSettings/Layouts/*.dwlt
 Assets/Art/white.png.meta
+Assets/Scenes/BossScene.unity
+UserSettings/EditorUserSettings.asset

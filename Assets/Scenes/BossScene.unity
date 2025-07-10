@@ -35145,6 +35145,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6601221316279165634, guid: e327bdfa4c1ef574681c9ca118e60f43, type: 3}
   chargePoint: {fileID: 642557564}
   maxMana: 100
+  maxHealth: 100
 --- !u!212 &924012105
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -37632,6 +37633,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   chargePoint: {fileID: 0}
   maxMana: 100
+  maxHealth: 100
 --- !u!1 &1458941370
 GameObject:
   m_ObjectHideFlags: 0
