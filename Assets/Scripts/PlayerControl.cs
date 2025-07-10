@@ -213,15 +213,21 @@ public class PlayerControl : MonoBehaviour
     {
         if (currentMana >= 17f)
         {
-            // Tạo chưởng
             GameObject proj = Instantiate(projectilePrefab, chargePoint.position, Quaternion.identity);
 
-            // Tính hướng bắn về phía chuột
+            // Tính hướng bắn
             Vector2 shootDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - chargePoint.position).normalized;
 
             // Gán vận tốc
             Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
             rb.linearVelocity = shootDir * 25f;
+
+            // Gán flip cho projectile
+            SpriteRenderer projSprite = proj.GetComponent<SpriteRenderer>();
+            if (projSprite != null)
+            {
+                projSprite.flipX = spriteRenderer.flipX; // đây là player spriteRenderer
+            }
 
             // Trừ mana
             currentMana -= 17f;
@@ -229,6 +235,7 @@ public class PlayerControl : MonoBehaviour
             hudController.UpdateMana(currentMana / maxMana);
 
             Debug.Log("Skill fired!");
+
         }
         else
         {

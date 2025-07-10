@@ -29,6 +29,14 @@ public class BossController : MonoBehaviour
     private bool isCasting = false;
     private bool canCast = true;
 
+    [Header("Summon")]
+    public GameObject summonEnemyPrefab;
+    public int summonCount = 3;
+    public float summonRadius = 2f;
+
+    private bool hasSummoned = false;
+    public float summonDelay = 1f;
+
     private void Awake()
     {
         if (hpBar != null) hpBar.fillAmount = 1f;
@@ -119,6 +127,13 @@ public class BossController : MonoBehaviour
         currentHp = Mathf.Clamp(currentHp, 0, maxHp);
         UpdateHpBar();
 
+        // Kiểm tra summon quái nếu chưa summon và máu <= 50%
+        if (!hasSummoned && currentHp <= maxHp / 2)
+        {
+            SummonEnemies();
+            hasSummoned = true;
+        }
+
         if (currentHp <= 0)
         {
             Die();
@@ -127,14 +142,29 @@ public class BossController : MonoBehaviour
 
     public void TakeDamage(Vector2 attackerPos, float knockbackForce, int damage)
     {
-        TakeDamage(damage);
+        currentHp -= damage;
+        currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+        UpdateHpBar();
+
+        // Kiểm tra summon quái nếu chưa summon và máu <= 50%
+        if (!hasSummoned && currentHp <= maxHp / 2)
+        {
+            SummonEnemies();
+            hasSummoned = true;
+        }
 
         if (knockbackForce > 0 && rb != null)
         {
             Vector2 knockDir = ((Vector2)transform.position - attackerPos).normalized;
             rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
         }
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
     }
+
 
     private void UpdateHpBar()
     {
@@ -180,4 +210,29 @@ public class BossController : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, rangedRange);
     }
+
+    private void SummonEnemies()
+    {
+        StartCoroutine(SummonEnemiesCoroutine());
+    }
+
+    private IEnumerator SummonEnemiesCoroutine()
+    {
+        for (int i = 0; i < summonCount; i++)
+        {
+            Vector2 spawnPos = (Vector2)transform.position + Random.insideUnitCircle * summonRadius;
+            GameObject enemy = Instantiate(summonEnemyPrefab, spawnPos, Quaternion.identity);
+
+            EnemyFollow enemyFollow = enemy.GetComponent<EnemyFollow>();
+            if (enemyFollow != null)
+            {
+                enemyFollow.player = player.transform;
+            }
+
+            yield return new WaitForSeconds(summonDelay); // Đợi trước khi spawn tiếp
+        }
+
+        Debug.Log("Boss summoned minions!");
+    }
+
 }
