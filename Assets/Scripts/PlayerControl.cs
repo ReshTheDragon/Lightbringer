@@ -190,7 +190,15 @@ public class PlayerControl : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce, 25f);
+            // Cả EnemyFollow và BossController đều có TakeHit()
+            if (enemy.GetComponent<EnemyFollow>() != null)
+            {
+                enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce, 25f);
+            }
+            else if (enemy.GetComponent<BossController>() != null)
+            {
+                enemy.GetComponent<BossController>().TakeDamage(25);
+            }
         }
     }
 
@@ -261,7 +269,7 @@ public class PlayerControl : MonoBehaviour
 
         // Cập nhật UI
         hudController.UpdateHealth(currentHealth / maxHealth);
-        Debug.Log("Player took " + damage + " damage. Current health: " + currentHealth);
+        //Debug.Log("Player took " + damage + " damage. Current health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
