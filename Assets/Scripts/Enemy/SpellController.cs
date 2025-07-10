@@ -3,17 +3,13 @@
 public class SpellController : MonoBehaviour
 {
     [Header("Spell Settings")]
-    public float spellSpeed = 5f;
-    public float lifeTime = 5f; // Thời gian tồn tại tối đa
+    public float spellSpeed = 2f;
+    public float lifeTime = 1f; // Thời gian tồn tại tối đa
     public int damage = 10;
 
     private Vector2 direction;
     private Rigidbody2D rb;
     private bool hasExploded = false;
-
-    [Header("Effects")]
-    public GameObject explosionEffect; // Hiệu ứng nổ (optional)
-    public float explosionRadius = 1f; // Bán kính nổ
 
     void Start()
     {
@@ -81,14 +77,8 @@ public class SpellController : MonoBehaviour
         if (hasExploded) return;
         hasExploded = true;
 
-        // Tạo hiệu ứng nổ (nếu có)
-        if (explosionEffect != null)
-        {
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
-        }
-
         // Gây damage cho player nếu trong bán kính nổ
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1);
         foreach (Collider2D collider in colliders)
         {
             if (collider.CompareTag("Player"))
@@ -101,14 +91,7 @@ public class SpellController : MonoBehaviour
             }
         }
 
-        // Hủy spell
-        Destroy(gameObject);
     }
 
-    // Vẽ bán kính nổ trong Scene view
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, explosionRadius);
-    }
+  
 }
