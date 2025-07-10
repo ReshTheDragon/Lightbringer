@@ -3,7 +3,7 @@
 public class ChestInteraction : MonoBehaviour
 {
     public Sprite openedChestSprite;
-    public GameObject potionPrefab;
+    public InventoryItem[] itemsToDrop;
     public Vector3 spawnOffset = Vector3.zero;
     public GameObject pressEText; // Thêm biến tham chiếu chữ E
 
@@ -39,9 +39,23 @@ public class ChestInteraction : MonoBehaviour
             pressEText.SetActive(false);
         }
 
-        if (potionPrefab != null)
+        if (itemsToDrop != null && itemsToDrop.Length > 0)
         {
-            Instantiate(potionPrefab, transform.position + spawnOffset, Quaternion.identity);
+            foreach (InventoryItem item in itemsToDrop)
+            {
+                GameObject droppedItem = new GameObject(item.itemName);
+                droppedItem.transform.position = transform.position + spawnOffset;
+                ItemPickup itemPickup = droppedItem.AddComponent<ItemPickup>();
+                itemPickup.item = item;
+                SpriteRenderer itemSpriteRenderer = droppedItem.AddComponent<SpriteRenderer>();
+                itemSpriteRenderer.sprite = item.icon;
+                // Add a Collider2D to the dropped item for interaction
+                CircleCollider2D collider = droppedItem.AddComponent<CircleCollider2D>();
+                collider.radius = 0.5f; // Adjust as needed
+                collider.isTrigger = true; // Make it a trigger
+                Rigidbody2D rb = droppedItem.AddComponent<Rigidbody2D>();
+                rb.bodyType = RigidbodyType2D.Kinematic;
+            }
         }
     }
 
