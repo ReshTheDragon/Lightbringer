@@ -30,7 +30,7 @@ public class ProjectileController : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             // Gây sát thương cho enemy
-            other.GetComponent<EnemyFollow>().TakeHit(transform.position, 5f, damage);
+            other.GetComponent<EnemyFollow>().TakeHit(transform.position, 5f, damage);  
             Destroy(gameObject); // hủy chưởng khi chạm enemy
         }
     }
