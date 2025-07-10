@@ -82,7 +82,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
         currentItem = null;
         quantity = 0;
         if (icon != null)
-        { 
+        {
             icon.sprite = null;
             icon.color = new Color(1, 1, 1, 0); // Make transparent
         }

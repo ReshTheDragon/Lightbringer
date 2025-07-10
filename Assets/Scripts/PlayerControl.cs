@@ -43,7 +43,7 @@ public class PlayerControl : MonoBehaviour
         currentStamina = maxStamina;
 
         // Tìm HUD Controller
-        hudController = FindAnyObjectByType<PlayerHUDController>();
+        hudController = FindObjectOfType<PlayerHUDController>();
 
         // Cập nhật UI ban đầu
         hudController.UpdateStamina(currentStamina / maxStamina);
@@ -138,7 +138,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        
+
 
         // Nhả chuột phải để bắn
         if (Input.GetMouseButtonUp(1) && isCharging)

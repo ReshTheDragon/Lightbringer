@@ -9,33 +9,16 @@ public class PlayerHUDController : MonoBehaviour
 
     public void UpdateHealth(float value)
     {
-        if (healthFill == null)
-        {
-            Debug.LogWarning("Health slider is null, skipping UpdateHealth.");
-            return;
-        }
-        //healthFill.fillAmount = value;
+        healthFill.fillAmount = value;
     }
 
     public void UpdateStamina(float value)
     {
-      
-        if (staminaFill == null)
-        {
-            Debug.LogWarning("Stamina slider is null, skipping UpdateStamina.");
-            return;
-        }
-        //staminaFill.fillAmount = value;
+        staminaFill.fillAmount = value;
     }
 
     public void UpdateMana(float value)
     {
-        if (manaFill == null)
-        {
-            Debug.LogWarning("Mana slider is null, skipping UpdateMana.");
-            return;
-        }
-
-        //manaFill.fillAmount = value;
+        manaFill.fillAmount = value;
     }
 }
