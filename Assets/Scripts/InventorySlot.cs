@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEditor;
 
 public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
