@@ -26,6 +26,7 @@ public class EnemyFollow : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        rb.isKinematic = true;
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         // Khởi tạo máu
@@ -49,7 +50,7 @@ public class EnemyFollow : MonoBehaviour
         if (distance < chaseRadius)
         {
             Vector2 direction = (player.position - transform.position).normalized;
-            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+            rb.MovePosition((Vector2)transform.position + (direction * speed * Time.deltaTime));
         }
 
         // Cập nhật vị trí thanh máu theo enemy

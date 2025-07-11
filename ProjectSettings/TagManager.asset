@@ -6,6 +6,11 @@ TagManager:
   tags:
   - Chest
   - Projectile
+  - Ground
+  - Wall
+  - Enemy
+  - Map
+  - InventoryUI
   layers:
   - Default
   - TransparentFX
@@ -18,8 +23,8 @@ TagManager:
   - 
   - Boss
   - 'Player '
-  - 
-  - 
+  - Map
+  - MiniMapIcon
   - 
   - 
   - 

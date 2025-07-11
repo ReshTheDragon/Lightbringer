@@ -25,6 +25,9 @@ public class PlayerControl : MonoBehaviour
     public float maxMana = 100f;
     private float currentMana;
 
+    public float maxHealth = 100f;
+    private float currentHealth;
+
     private bool isCharging = false;
 
 
@@ -32,6 +35,9 @@ public class PlayerControl : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Khởi tạo máu
+        currentHealth = maxHealth;
 
         // Stamina khởi tạo
         currentStamina = maxStamina;
@@ -45,10 +51,17 @@ public class PlayerControl : MonoBehaviour
         currentMana = maxMana;
         hudController.UpdateMana(currentMana / maxMana);
 
+        hudController.UpdateHealth(currentHealth / maxHealth);
+
     }
 
     void Update()
     {
+        if (InventoryManager.isInventoryOpen)
+        {
+            return; // Don't process any input if inventory is open
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!isPauseMenuLoaded)
@@ -83,13 +96,13 @@ public class PlayerControl : MonoBehaviour
         // Kiểm tra stamina đủ mới cho đánh
         if (Input.GetMouseButtonDown(0))
         {
-            if (currentStamina >= 15f)
+            if (currentStamina >= 17f)
             {
                 animator.SetTrigger("IsAttacking");
                 Attack();
 
                 // Trừ stamina
-                currentStamina -= 15f;
+                currentStamina -= 17f;
                 if (currentStamina < 0) currentStamina = 0;
 
                 // Update UI
@@ -104,7 +117,7 @@ public class PlayerControl : MonoBehaviour
         // Hồi stamina từ từ mỗi frame
         if (currentStamina < maxStamina)
         {
-            currentStamina += 5f * Time.deltaTime;  // tốc độ hồi 5/s
+            currentStamina += 1f * Time.deltaTime;  // tốc độ hồi 5/s
             if (currentStamina > maxStamina) currentStamina = maxStamina;
 
             hudController.UpdateStamina(currentStamina / maxStamina);
@@ -125,22 +138,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        // Đang giữ để charge
-        if (Input.GetMouseButton(1) && isCharging)
-        {
-            // Tốn mana dần theo thời gian
-            currentMana -= 30f * Time.deltaTime;
-            if (currentMana <= 0)
-            {
-                currentMana = 0;
-                isCharging = false;
-                animator.SetBool("IsCharging", false);
-                Debug.Log("Out of mana while charging!");
-            }
 
-            // Update UI
-            hudController.UpdateMana(currentMana / maxMana);
-        }
 
         // Nhả chuột phải để bắn
         if (Input.GetMouseButtonUp(1) && isCharging)
@@ -152,7 +150,7 @@ public class PlayerControl : MonoBehaviour
 
         if (currentMana < maxMana)
         {
-            currentMana += 5f * Time.deltaTime;
+            currentMana += 1f * Time.deltaTime;
             if (currentMana > maxMana) currentMana = maxMana;
 
             hudController.UpdateMana(currentMana / maxMana);
@@ -172,7 +170,19 @@ public class PlayerControl : MonoBehaviour
             chargePoint.localPosition = chargeLocalPos;
         }
 
+        // Use hotbar items
+        for (int i = 0; i < 5; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                UseHotbarItem(i);
+            }
+        }
+    }
 
+    void UseHotbarItem(int index)
+    {
+        InventoryManager.Instance.UseItemFromHotbar(index);
     }
 
     void Attack()
@@ -180,7 +190,15 @@ public class PlayerControl : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce, 25f);
+            // Cả EnemyFollow và BossController đều có TakeHit()
+            if (enemy.GetComponent<EnemyFollow>() != null)
+            {
+                enemy.GetComponent<EnemyFollow>().TakeHit(transform.position, knockbackForce, 25f);
+            }
+            else if (enemy.GetComponent<BossController>() != null)
+            {
+                enemy.GetComponent<BossController>().TakeDamage(25);
+            }
         }
     }
 
@@ -193,24 +211,31 @@ public class PlayerControl : MonoBehaviour
 
     void ShootSkill()
     {
-        if (currentMana >= 15f)
+        if (currentMana >= 17f)
         {
-            // Tạo chưởng
             GameObject proj = Instantiate(projectilePrefab, chargePoint.position, Quaternion.identity);
 
-            // Tính hướng bắn về phía chuột
+            // Tính hướng bắn
             Vector2 shootDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - chargePoint.position).normalized;
 
             // Gán vận tốc
             Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = shootDir * 10f;
+            rb.linearVelocity = shootDir * 25f;
+
+            // Gán flip cho projectile
+            SpriteRenderer projSprite = proj.GetComponent<SpriteRenderer>();
+            if (projSprite != null)
+            {
+                projSprite.flipX = spriteRenderer.flipX; // đây là player spriteRenderer
+            }
 
             // Trừ mana
-            currentMana -= 15f;
+            currentMana -= 17f;
             if (currentMana < 0) currentMana = 0;
             hudController.UpdateMana(currentMana / maxMana);
 
             Debug.Log("Skill fired!");
+
         }
         else
         {
@@ -232,6 +257,40 @@ public class PlayerControl : MonoBehaviour
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         hudController.UpdateStamina(currentStamina / maxStamina);
         Debug.Log("Đã hồi " + amount + " stamina");
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        hudController.UpdateHealth(currentHealth / maxHealth);
+        Debug.Log("Đã hồi " + amount + " máu");
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (currentHealth <= 0) return;
+
+        currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+
+        // Cập nhật UI
+        hudController.UpdateHealth(currentHealth / maxHealth);
+        //Debug.Log("Player took " + damage + " damage. Current health: " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Player died!");
+        // Thêm logic khi người chơi chết, ví dụ:
+        animator.SetTrigger("IsDead"); // Nếu có animation chết
+        // Hoặc tải lại scene, vô hiệu hóa điều khiển, v.v.
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 }
