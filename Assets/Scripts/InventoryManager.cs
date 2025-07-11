@@ -74,8 +74,15 @@ public class InventoryManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            inventoryUI.SetActive(!inventoryUI.activeSelf);
-            isInventoryOpen = inventoryUI.activeSelf;
+            if (inventoryUI != null) // Add null check here
+            {
+                inventoryUI.SetActive(!inventoryUI.activeSelf);
+                isInventoryOpen = inventoryUI.activeSelf;
+            }
+            else
+            {
+                Debug.LogWarning("InventoryUI is not assigned in InventoryManager. Cannot open/close inventory.");
+            }
         }
 
         // Handle Shift + Number key presses to move items to the hotbar
@@ -241,105 +248,57 @@ public class InventoryManager : MonoBehaviour
 
     public bool AddItemToHotbar(InventoryItem item, int amount = 1)
     {
-        // Ưu tiên cộng vào slot đã có cùng item còn chỗ
         foreach (var slot in hotbarSlots)
         {
-            if (slot.currentItem == item && slot.quantity < InventorySlot.MaxStack)
+            if (slot.currentItem == item)
             {
-                int availableSpace = InventorySlot.MaxStack - slot.quantity;
-                int amountToAdd = Mathf.Min(availableSpace, amount);
-                slot.AddItem(item, amountToAdd);
-                amount -= amountToAdd;
-
-                if (amount <= 0)
-                {
-                    SaveInventory();
-                    return true;
-                }
+                slot.AddItem(item, amount);
+                SaveInventory(); // Save after adding
+                return true;
             }
         }
 
-        // Nếu vẫn còn item chưa add hết, tìm slot trống
         foreach (var slot in hotbarSlots)
         {
             if (slot.currentItem == null)
             {
-                int amountToAdd = Mathf.Min(InventorySlot.MaxStack, amount);
-                slot.AddItem(item, amountToAdd);
-                amount -= amountToAdd;
-
                 Debug.Log("Đã add vào hotbar: " + item.itemName);
-
-                if (amount <= 0)
-                {
-                    SaveInventory();
-                    return true;
-                }
+                slot.AddItem(item, amount);
+                SaveInventory(); // Save after adding
+                return true;
             }
         }
-
-        // Nếu còn dư mà hết slot
-        if (amount > 0)
-        {
-            Debug.Log("Hotbar full hoặc không đủ chỗ stack thêm " + item.itemName);
-            SaveInventory();
-            return false;
-        }
-
-        SaveInventory();
-        return true;
+        Debug.Log("Hotbar full!");
+        return false;
     }
-
 
     public void AddItemToInventory(InventoryItem item, int amount = 1)
     {
         Debug.Log($"Attempting to add {item.itemName} to inventory. Inventory slots length: {inventorySlots.Length}");
 
-        // Ưu tiên cộng vào slot đã có cùng item còn chỗ
         foreach (var slot in inventorySlots)
         {
-            if (slot != null && slot.currentItem == item && slot.quantity < InventorySlot.MaxStack)
+            if (slot != null && slot.currentItem == item)
             {
-                int availableSpace = InventorySlot.MaxStack - slot.quantity;
-                int amountToAdd = Mathf.Min(availableSpace, amount);
-
-                slot.AddItem(item, amountToAdd);
-                amount -= amountToAdd;
-
-                if (amount <= 0)
-                {
-                    SaveInventory();
-                    return;
-                }
+                Debug.Log($"Stacking {item.itemName} in existing slot.");
+                slot.AddItem(item, amount);
+                SaveInventory(); // Save after adding
+                return;
             }
         }
 
-        // Nếu vẫn còn item chưa add hết, tìm slot trống
         foreach (var slot in inventorySlots)
         {
             if (slot != null && slot.currentItem == null)
             {
-                int amountToAdd = Mathf.Min(InventorySlot.MaxStack, amount);
-                slot.AddItem(item, amountToAdd);
-                amount -= amountToAdd;
-
-                if (amount <= 0)
-                {
-                    SaveInventory();
-                    return;
-                }
+                Debug.Log($"Adding {item.itemName} to empty inventory slot.");
+                slot.AddItem(item, amount);
+                SaveInventory(); // Save after adding
+                return;
             }
         }
-
-        // Nếu vẫn còn dư
-        if (amount > 0)
-        {
-            Debug.Log("Inventory full or not enough stacking room for " + item.itemName);
-        }
-
-        SaveInventory();
+        Debug.Log("Inventory full! No space for " + item.itemName);
     }
-
 
     public void RemoveItemFromInventory(InventoryItem item, int amount = 1)
     {

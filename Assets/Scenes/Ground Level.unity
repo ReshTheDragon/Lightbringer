@@ -2342,7 +2342,7 @@ Transform:
   m_GameObject: {fileID: 316252492}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -51.7, y: -56.4, z: -10}
+  m_LocalPosition: {x: 115.6, y: 15.7, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2891,15 +2891,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 72d4b42e7c8a6244a85e668f87cf386c, type: 2}
   - {fileID: 11400000, guid: c68f28aa07df17344835a63db0b2044f, type: 2}
   - {fileID: 11400000, guid: 4ab559f9786492d4cb0cfc4866f82900, type: 2}
-  - {fileID: 11400000, guid: 4ab559f9786492d4cb0cfc4866f82900, type: 2}
-  - {fileID: 11400000, guid: 4ab559f9786492d4cb0cfc4866f82900, type: 2}
-  - {fileID: 11400000, guid: 4ab559f9786492d4cb0cfc4866f82900, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
-  - {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
   spawnOffset: {x: 0, y: -1, z: 0}
   pressEText: {fileID: 1823119}
 --- !u!61 &477837713
@@ -7009,7 +7000,7 @@ GameObject:
   - component: {fileID: 554610834}
   m_Layer: 5
   m_Name: InventoryPanel
-  m_TagString: Untagged
+  m_TagString: InventoryUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -200753,9 +200744,10 @@ GameObject:
   - component: {fileID: 919003851}
   - component: {fileID: 919003850}
   - component: {fileID: 919003849}
+  - component: {fileID: 919003852}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: InventoryUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -200845,6 +200837,19 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &919003852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919003847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 780b9ad1eb3b8014a96d9bea3a57f75e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryUIPanel: {fileID: 554610830}
 --- !u!1 &969343106
 GameObject:
   m_ObjectHideFlags: 0
@@ -201125,7 +201130,7 @@ Transform:
   m_GameObject: {fileID: 997244579}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -51.7, y: -56.4, z: 0}
+  m_LocalPosition: {x: 115.6, y: 15.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -226927,7 +226932,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300142, guid: 29c9cded5e558164aaf8c9bf08aa1510, type: 3}
   m_Color: {r: 0.25390032, g: 0.2905661, b: 0.054275528, a: 1}
   m_FlipX: 0
@@ -279240,7 +279245,7 @@ Transform:
   m_GameObject: {fileID: 1792619450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -51.7, y: -56.4, z: -10}
+  m_LocalPosition: {x: 115.6, y: 15.7, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
