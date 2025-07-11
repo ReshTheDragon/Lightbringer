@@ -241,57 +241,105 @@ public class InventoryManager : MonoBehaviour
 
     public bool AddItemToHotbar(InventoryItem item, int amount = 1)
     {
+        // Ưu tiên cộng vào slot đã có cùng item còn chỗ
         foreach (var slot in hotbarSlots)
         {
-            if (slot.currentItem == item)
+            if (slot.currentItem == item && slot.quantity < InventorySlot.MaxStack)
             {
-                slot.AddItem(item, amount);
-                SaveInventory(); // Save after adding
-                return true;
+                int availableSpace = InventorySlot.MaxStack - slot.quantity;
+                int amountToAdd = Mathf.Min(availableSpace, amount);
+                slot.AddItem(item, amountToAdd);
+                amount -= amountToAdd;
+
+                if (amount <= 0)
+                {
+                    SaveInventory();
+                    return true;
+                }
             }
         }
 
+        // Nếu vẫn còn item chưa add hết, tìm slot trống
         foreach (var slot in hotbarSlots)
         {
             if (slot.currentItem == null)
             {
+                int amountToAdd = Mathf.Min(InventorySlot.MaxStack, amount);
+                slot.AddItem(item, amountToAdd);
+                amount -= amountToAdd;
+
                 Debug.Log("Đã add vào hotbar: " + item.itemName);
-                slot.AddItem(item, amount);
-                SaveInventory(); // Save after adding
-                return true;
+
+                if (amount <= 0)
+                {
+                    SaveInventory();
+                    return true;
+                }
             }
         }
-        Debug.Log("Hotbar full!");
-        return false;
+
+        // Nếu còn dư mà hết slot
+        if (amount > 0)
+        {
+            Debug.Log("Hotbar full hoặc không đủ chỗ stack thêm " + item.itemName);
+            SaveInventory();
+            return false;
+        }
+
+        SaveInventory();
+        return true;
     }
+
 
     public void AddItemToInventory(InventoryItem item, int amount = 1)
     {
         Debug.Log($"Attempting to add {item.itemName} to inventory. Inventory slots length: {inventorySlots.Length}");
 
+        // Ưu tiên cộng vào slot đã có cùng item còn chỗ
         foreach (var slot in inventorySlots)
         {
-            if (slot != null && slot.currentItem == item)
+            if (slot != null && slot.currentItem == item && slot.quantity < InventorySlot.MaxStack)
             {
-                Debug.Log($"Stacking {item.itemName} in existing slot.");
-                slot.AddItem(item, amount);
-                SaveInventory(); // Save after adding
-                return;
+                int availableSpace = InventorySlot.MaxStack - slot.quantity;
+                int amountToAdd = Mathf.Min(availableSpace, amount);
+
+                slot.AddItem(item, amountToAdd);
+                amount -= amountToAdd;
+
+                if (amount <= 0)
+                {
+                    SaveInventory();
+                    return;
+                }
             }
         }
 
+        // Nếu vẫn còn item chưa add hết, tìm slot trống
         foreach (var slot in inventorySlots)
         {
             if (slot != null && slot.currentItem == null)
             {
-                Debug.Log($"Adding {item.itemName} to empty inventory slot.");
-                slot.AddItem(item, amount);
-                SaveInventory(); // Save after adding
-                return;
+                int amountToAdd = Mathf.Min(InventorySlot.MaxStack, amount);
+                slot.AddItem(item, amountToAdd);
+                amount -= amountToAdd;
+
+                if (amount <= 0)
+                {
+                    SaveInventory();
+                    return;
+                }
             }
         }
-        Debug.Log("Inventory full! No space for " + item.itemName);
+
+        // Nếu vẫn còn dư
+        if (amount > 0)
+        {
+            Debug.Log("Inventory full or not enough stacking room for " + item.itemName);
+        }
+
+        SaveInventory();
     }
+
 
     public void RemoveItemFromInventory(InventoryItem item, int amount = 1)
     {
