@@ -151,5 +151,22 @@ public class EnemyFollow : MonoBehaviour
             isPlayerInAttackRange = false;
         }
     }
+    public void Die()
+    {
+        if (isDying) return;
+
+        isDying = true;
+        StopAllCoroutines(); // Dừng mọi coroutine nếu có
+        GetComponent<Collider2D>().enabled = false;
+        rb.linearVelocity = Vector2.zero;
+        rb.isKinematic = true;
+
+        animator.SetTrigger("IsDead");
+
+        if (healthBarInstance != null)
+            Destroy(healthBarInstance);
+
+        Destroy(gameObject, 1f); // Cho phép 1s để animation Die chạy nếu có
+    }
 
 }
