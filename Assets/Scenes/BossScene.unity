@@ -34317,6 +34317,7 @@ GameObject:
   - component: {fileID: 119091799}
   - component: {fileID: 119091798}
   - component: {fileID: 119091801}
+  - component: {fileID: 119091802}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: InventoryUI
@@ -34421,6 +34422,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUIPanel: {fileID: 1427845460}
+--- !u!114 &119091802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119091796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dbc628230fd1b0458cf125f49907bfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventorySlots:
+  - {fileID: 314851955}
+  - {fileID: 2016539535}
+  - {fileID: 567061356}
+  - {fileID: 784028139}
+  - {fileID: 269687376}
+  - {fileID: 923193307}
+  - {fileID: 1757022240}
+  - {fileID: 514002039}
+  - {fileID: 1528206470}
+  hotbarSlots:
+  - {fileID: 236689774}
+  - {fileID: 979010171}
+  - {fileID: 136683588}
+  inventoryUI: {fileID: 1427845460}
 --- !u!1 &136683587
 GameObject:
   m_ObjectHideFlags: 0
