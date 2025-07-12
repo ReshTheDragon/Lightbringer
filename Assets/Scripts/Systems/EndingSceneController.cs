@@ -1,10 +1,12 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 public class EndingSceneController : MonoBehaviour
 {
+    public Light2D globalLight;
     public GameObject player; // Nhân vật
     public Transform podiumPosition; // Vị trí bục
     public GameObject chest; // Rương
@@ -15,6 +17,11 @@ public class EndingSceneController : MonoBehaviour
     public GameObject portal; // GameObject vòng xoay xuyên không
     public Button retryButton; // Button "Chơi lại"
     public Button endGameButton; // Button "End Game"
+
+    public GameObject winFinalDialog; // Dialog "You Win"
+    public Button exitButton;         // Nút Exit
+    public Button newGameButton;      // Nút New Game
+
     public Button openChestButton; // Button "Mở rương"
     public Button cancelButton; // Button "Hủy"
     public Animator lightOrbAnimator; // Animator của quả cầu ánh sáng
@@ -24,6 +31,7 @@ public class EndingSceneController : MonoBehaviour
     private bool isMovingToPodium = true; // Trạng thái di chuyển đến bục
     private float moveSpeed = 5f; // Tốc độ di chuyển của nhân vật
 
+
     void Start()
     {
         // Ẩn tất cả dialog và portal ban đầu
@@ -31,7 +39,13 @@ public class EndingSceneController : MonoBehaviour
         winDialog.SetActive(false);
         lightCoreDialog.SetActive(false);
         lightOrb.SetActive(false);
-        portal.SetActive(false); // Ẩn portal ban đầu
+        portal.SetActive(false); // Ẩn portal ban đầu                      
+        winFinalDialog.SetActive(false);
+
+        // Gán sự kiện cho các nút trong WinFinalDialog
+        exitButton.onClick.AddListener(ExitGame);
+        newGameButton.onClick.AddListener(NewGame);
+
 
         // Gán sự kiện cho các button
         retryButton.onClick.AddListener(RetryGame);
@@ -112,6 +126,12 @@ public class EndingSceneController : MonoBehaviour
             StartCoroutine(WaitForLightCoreDialogDelay()); // Chuyển tiếp với độ trễ
         }
     }
+    void ShowFinalWinDialog()
+    {
+        winFinalDialog.SetActive(true); // Hiện final dialog
+        StartCoroutine(FadeInLight());  // Làm sáng dần
+    }
+
 
     private IEnumerator WaitForLightOrbAnimation()
     {
@@ -128,7 +148,7 @@ public class EndingSceneController : MonoBehaviour
     private IEnumerator WaitForLightCoreDialogDelay()
     {
         yield return new WaitForSeconds(2f); // Chờ 2 giây sau khi lightOrb xuất hiện
-        ShowLightCoreDialog();
+        StartCoroutine(WaitForLightCoreDialog());
     }
 
     void CancelOpenChest()
@@ -136,31 +156,23 @@ public class EndingSceneController : MonoBehaviour
         winDialog.SetActive(false); // Đóng dialog hỏi mở rương
     }
 
-    void ShowLightCoreDialog()
-    {
-        lightCoreDialog.SetActive(true);
-        StartCoroutine(WaitForLightCoreDialog()); // Chờ trước khi chạy portal animation
-    }
-
     private IEnumerator WaitForLightCoreDialog()
     {
-        yield return new WaitForSeconds(2f); // Chờ 2 giây để người chơi đọc dialog
-        StartPortalAnimation();
-    }
-
-    void StartPortalAnimation()
-    {
-        portal.SetActive(true); // Bật portal trước khi chạy animation
+        portal.SetActive(true);
         if (portalAnimator != null)
         {
-            portalAnimator.SetTrigger("Start"); // Chạy animation vòng xoay
-            StartCoroutine(WaitForPortalAnimation()); // Chờ animation hoàn tất
+            portalAnimator.SetTrigger("Start");
         }
-        else
-        {
-            Debug.LogWarning("portalAnimator is not assigned, loading BrightScene immediately");
-            LoadBrightScene();
-        }
+        yield return new WaitForSeconds(1f);
+        portal.SetActive(false);
+        //Hiện lightCoreDialog
+        lightCoreDialog.SetActive(true);
+
+        yield return new WaitForSeconds(5f);
+        lightCoreDialog.SetActive(false);
+        
+        lightOrb.SetActive(false);
+        ShowFinalWinDialog();
     }
 
     private IEnumerator WaitForPortalAnimation()
@@ -172,12 +184,35 @@ public class EndingSceneController : MonoBehaviour
             yield return null; // Chờ frame tiếp theo
         }
         Debug.Log("Portal animation finished");
-        LoadBrightScene();
+        ShowFinalWinDialog();
     }
 
-    void LoadBrightScene()
+    IEnumerator FadeInLight()
     {
-        SceneManager.LoadScene("BrightScene"); // Chuyển sang scene sáng
+        float targetIntensity = 2f; // Sáng hơn bình thường
+        float speed = 0.5f;
+
+        while (globalLight != null && globalLight.intensity < targetIntensity)
+        {
+            globalLight.intensity += speed * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    void ExitGame()
+    {
+        Debug.Log("Exiting game");
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    void NewGame()
+    {
+        Debug.Log("Starting new game");
+        PlayerPrefs.DeleteAll(); // Xoá dữ liệu
+        SceneManager.LoadScene("GameScene"); // Chơi lại từ đầu
     }
 
     void RetryGame()
