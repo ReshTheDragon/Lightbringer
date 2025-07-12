@@ -64,7 +64,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         // Toggle Inventory bằng phím I
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
             isInventoryOpen = inventoryUI.activeSelf;

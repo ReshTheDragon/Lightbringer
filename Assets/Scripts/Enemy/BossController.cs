@@ -177,7 +177,27 @@ public class BossController : MonoBehaviour
     private void Die()
     {
         animator.SetTrigger("IsDie");
-        Destroy(gameObject, 1f);
+
+        // Gọi hàm kill minions trước khi destroy boss
+        Invoke(nameof(KillAllMinionsAndEnd), 1.2f);
+
+        // Huỷ object sau khi xong mọi việc
+        Destroy(gameObject, 1.3f);
+    }
+
+
+    private void KillAllMinionsAndEnd()
+    {
+        EnemyFollow[] minions = FindObjectsOfType<EnemyFollow>();
+        foreach (var minion in minions)
+        {
+            if (minion != null)
+            {
+                minion.Die(); // Dùng hàm Die mới thêm
+            }
+        }
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("EndingScene");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

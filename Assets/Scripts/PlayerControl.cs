@@ -287,10 +287,20 @@ public class PlayerControl : MonoBehaviour
     void Die()
     {
         Debug.Log("Player died!");
-        // Thêm logic khi người chơi chết, ví dụ:
-        animator.SetTrigger("IsDead"); // Nếu có animation chết
-        // Hoặc tải lại scene, vô hiệu hóa điều khiển, v.v.
-        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        animator.SetTrigger("IsDead");
+
+        // Load lại scene GroundLevel sau một chút delay để animation kịp chạy
+        Invoke(nameof(LoadGroundLevelScene), 0.5f);
     }
+
+    void LoadGroundLevelScene()
+    {
+        // Bỏ pause nếu có
+        Time.timeScale = 1f;
+
+        // Load scene GroundLevel
+        SceneManager.LoadScene("Ground Level");
+    }
+
 
 }
