@@ -154,6 +154,7 @@ public class EnemyFollow : MonoBehaviour
     public void Die()
     {
         if (isDying) return;
+        this.enabled = false;
 
         isDying = true;
         StopAllCoroutines(); // Dừng mọi coroutine nếu có

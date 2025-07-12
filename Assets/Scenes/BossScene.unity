@@ -40363,8 +40363,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2006315466}
   hpBar: {fileID: 1430965020}
-  maxHp: 100
-  moveSpeed: 5
+  maxHp: 10
+  moveSpeed: 10
   enterDamage: 10
   stayDamage: 1
   rangedRange: 10
