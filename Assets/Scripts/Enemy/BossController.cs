@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,7 +28,6 @@ public class BossController : MonoBehaviour
 
     private bool isCasting = false;
     private bool canCast = true;
-    private bool canMove = true;
 
     [Header("Summon")]
     public GameObject summonEnemyPrefab;
@@ -41,8 +39,6 @@ public class BossController : MonoBehaviour
 
     // Danh sách lưu trữ các minion đã summon
     private System.Collections.Generic.List<GameObject> summonedMinions = new System.Collections.Generic.List<GameObject>();
-
-    private bool isDead = false;
 
     private void Awake()
     {
@@ -56,34 +52,32 @@ public class BossController : MonoBehaviour
         animator = GetComponent<Animator>();
         player = FindAnyObjectByType<PlayerControl>();
         originalScale = transform.localScale;
-
     }
 
     private void Update()
     {
-        if (player == null || isDead) return;
+        if (player == null) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+
         FlipTowardPlayer();
 
-        if (isCasting)
+        if (!isCasting)
         {
-            animator.SetBool("IsWalking", false); // boss đứng yên khi cast
-            return;
+            if (distanceToPlayer > rangedRange && canCast)
+            {
+                StartCoroutine(CastSpell());
+            }
+            else
+            {
+                MoveToPlayer();
+            }
         }
-
-        MoveToPlayer(); // chỉ gọi khi không cast
-
-        if (distanceToPlayer > rangedRange && canCast)
-        {
-            StartCoroutine(CastSpell());
-        }
-
     }
 
     private void MoveToPlayer()
     {
-        if (player == null || isDead || !canMove) return;
+        if (player == null) return;
 
         animator.SetBool("IsWalking", true);
         Vector2 target = Vector2.MoveTowards(transform.position, player.transform.position, moveSpeed * Time.deltaTime);
@@ -99,15 +93,11 @@ public class BossController : MonoBehaviour
 
     private IEnumerator CastSpell()
     {
-        if (isDead) yield break;
         isCasting = true;
         canCast = false;
-        canMove = false;
 
         animator.SetBool("IsWalking", false);
         animator.SetBool("IsCast", true);
-
-        rb.linearVelocity = Vector2.zero; // ← Chắc chắn boss đứng yên khi bắt đầu cast
 
         yield return new WaitForSeconds(spellCastTime);
 
@@ -117,7 +107,6 @@ public class BossController : MonoBehaviour
         yield return new WaitForSeconds(rangedAttackCooldown);
         canCast = true;
         isCasting = false;
-        canMove = true;
     }
 
     private void SpawnSpell()
@@ -137,8 +126,6 @@ public class BossController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead) return; // Thêm kiểm tra isDead
-
         currentHp -= damage;
         currentHp = Mathf.Clamp(currentHp, 0, maxHp);
         UpdateHpBar();
@@ -148,6 +135,31 @@ public class BossController : MonoBehaviour
         {
             SummonEnemies();
             hasSummoned = true;
+        }
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void TakeDamage(Vector2 attackerPos, float knockbackForce, int damage)
+    {
+        currentHp -= damage;
+        currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+        UpdateHpBar();
+
+        // Kiểm tra summon quái nếu chưa summon và máu <= 50%
+        if (!hasSummoned && currentHp <= maxHp / 2)
+        {
+            SummonEnemies();
+            hasSummoned = true;
+        }
+
+        if (knockbackForce > 0 && rb != null)
+        {
+            Vector2 knockDir = ((Vector2)transform.position - attackerPos).normalized;
+            rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
         }
 
         if (currentHp <= 0)
@@ -166,28 +178,14 @@ public class BossController : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return;
-
-        isDead = true;
-        Debug.Log("Die() method called");
-
-        // Dừng mọi hoạt động
+        // Disable các components để boss không thể di chuyển hay tấn công nữa
         rb.linearVelocity = Vector2.zero;
-        isCasting = false;
-        canCast = false;
+        this.enabled = false; // Disable script này
 
-        // Disable collider để ngăn trigger events
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = false;
-
-        // Dừng tất cả animator bools
-        animator.SetBool("IsWalking", false);
-        animator.SetBool("IsCast", false);
-        animator.SetBool("IsAttack", false);
-
-        Debug.Log("Setting IsDie trigger");
+        // Trigger animation chết
         animator.SetTrigger("IsDie");
 
+        // Bắt đầu quá trình chết
         StartCoroutine(DeathSequence());
     }
 
@@ -195,16 +193,13 @@ public class BossController : MonoBehaviour
     {
         Debug.Log("Boss is dying...");
 
-        // Disable script để ngăn Update() chạy nhưng vẫn cho phép coroutine hoạt động
-        this.enabled = false;
-
-        // Đợi animation chết hoàn thành
+        // Đợi animation chết hoàn thành (thường khoảng 2-3 giây)
         yield return new WaitForSeconds(2.5f);
 
         // Giết tất cả minions
         KillAllMinions();
 
-        // Đợi thêm 1.5s để minions chết hoàn toàn
+        // Đợi thêm 1.5s để minions chết hoàn toàn (vì minions destroy sau 1s)
         yield return new WaitForSeconds(1.5f);
 
         // Load ending scene
@@ -235,8 +230,6 @@ public class BossController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isDead) return; // Thêm kiểm tra isDead
-
         if (collision.CompareTag("Player") && player != null)
         {
             animator.SetBool("IsAttack", true);
@@ -246,8 +239,6 @@ public class BossController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (isDead) return; // Thêm kiểm tra isDead
-
         if (collision.CompareTag("Player") && player != null)
         {
             player.TakeDamage(stayDamage);
@@ -256,8 +247,6 @@ public class BossController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (isDead) return; // Thêm kiểm tra isDead
-
         if (collision.CompareTag("Player"))
         {
             animator.SetBool("IsAttack", false);
@@ -273,6 +262,7 @@ public class BossController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, summonRadius);
     }
+
     private void SummonEnemies()
     {
         StartCoroutine(SummonEnemiesCoroutine());
