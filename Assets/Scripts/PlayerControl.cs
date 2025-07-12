@@ -299,7 +299,10 @@ public class PlayerControl : MonoBehaviour
         Time.timeScale = 1f;
 
         // Load scene GroundLevel
-        SceneManager.LoadScene("Ground Level");
+        //SceneManager.LoadScene("Ground Level");
+        PlayerPrefs.SetString("LastLevel", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetInt("IsWin", 0);
+        SceneManager.LoadScene("EndingScene");
     }
 
 

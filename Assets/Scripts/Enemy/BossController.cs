@@ -202,8 +202,8 @@ public class BossController : MonoBehaviour
 
       
         yield return new WaitForSeconds(1.5f);
+        PlayerPrefs.SetInt("IsWin", 1);
 
-        
         Debug.Log("Loading ending scene...");
         UnityEngine.SceneManagement.SceneManager.LoadScene("EndingScene");
 
