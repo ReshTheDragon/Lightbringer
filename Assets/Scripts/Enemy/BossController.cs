@@ -59,6 +59,7 @@ public class BossController : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+        MoveToPlayer();
 
         FlipTowardPlayer();
 
@@ -178,14 +179,14 @@ public class BossController : MonoBehaviour
 
     private void Die()
     {
-        // Disable các components để boss không thể di chuyển hay tấn công nữa
+        
         rb.linearVelocity = Vector2.zero;
-        this.enabled = false; // Disable script này
+        this.enabled = false; 
 
-        // Trigger animation chết
+        
         animator.SetTrigger("IsDie");
 
-        // Bắt đầu quá trình chết
+        
         StartCoroutine(DeathSequence());
     }
 
@@ -193,20 +194,20 @@ public class BossController : MonoBehaviour
     {
         Debug.Log("Boss is dying...");
 
-        // Đợi animation chết hoàn thành (thường khoảng 2-3 giây)
+        
         yield return new WaitForSeconds(2.5f);
 
-        // Giết tất cả minions
+     
         KillAllMinions();
 
-        // Đợi thêm 1.5s để minions chết hoàn toàn (vì minions destroy sau 1s)
+      
         yield return new WaitForSeconds(1.5f);
 
-        // Load ending scene
+        
         Debug.Log("Loading ending scene...");
         UnityEngine.SceneManagement.SceneManager.LoadScene("EndingScene");
 
-        // Destroy boss object cuối cùng
+       
         Destroy(gameObject);
     }
 
