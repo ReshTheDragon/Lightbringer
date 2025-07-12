@@ -31,3 +31,5 @@ UserSettings/EditorUserSettings.asset
 *.unity
 *.unity
 UserSettings/EditorUserSettings.asset
+*.unity
+*.asset
