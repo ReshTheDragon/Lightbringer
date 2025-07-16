@@ -14,19 +14,19 @@ public class EnemyFollow : MonoBehaviour
     public GameObject healthBarPrefab; // Prefab thanh máu
 
     private bool isCollidingWithPlayer = false;
-    private bool isPlayerInAttackRange = false;
-    private Animator animator;
-    private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
+    protected bool isPlayerInAttackRange = false; // Changed to protected
+    protected Animator animator; // Changed to protected
+    protected Rigidbody2D rb; // Changed to protected
+    protected SpriteRenderer spriteRenderer; // Changed to protected
 
-    private bool isDying = false;
-    private float maxHealth = 100f;
-    private float currentHealth;
+    protected bool isDying = false; // Changed to protected
+    protected float maxHealth = 100f; // Changed to protected
+    protected float currentHealth; // Changed to protected
 
     private GameObject healthBarInstance;
     private Image healthFill;
 
-    void Start()
+    protected virtual void Start() // Made virtual
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -46,7 +46,7 @@ public class EnemyFollow : MonoBehaviour
         healthFill = healthBarInstance.transform.Find("BackGround/Fill").GetComponent<Image>();
     }
 
-    void Update()
+    protected virtual void Update() // Made virtual
     {
         if (player == null || isDying) return;
 
@@ -57,6 +57,16 @@ public class EnemyFollow : MonoBehaviour
         {
             Vector2 direction = (player.position - transform.position).normalized;
             rb.MovePosition((Vector2)transform.position + (direction * speed * Time.deltaTime));
+
+            // Flip enemy theo hướng di chuyển
+            if (direction.x > 0)
+            {
+                spriteRenderer.flipX = false; // Quay mặt phải
+            }
+            else if (direction.x < 0)
+            {
+                spriteRenderer.flipX = true; // Quay mặt trái
+            }
         }
 
         // Cập nhật vị trí thanh máu theo enemy
@@ -72,18 +82,19 @@ public class EnemyFollow : MonoBehaviour
         }
     }
 
-    void AttackPlayer()
+    protected virtual void AttackPlayer() // Made virtual
     {
         PlayerControl playerControl = player.GetComponent<PlayerControl>();
         if (playerControl != null)
         {
+
             playerControl.TakeDamage(attackDamage);
             lastAttackTime = Time.time;
             Debug.Log($"Enemy attacked player for {attackDamage} damage.");
         }
     }
 
-    public void TakeHit(Vector3 attackerPos, float force, float damage)
+    public virtual void TakeHit(Vector3 attackerPos, float force, float damage) // Made virtual
     {
         if (isDying) return;
 
@@ -106,7 +117,7 @@ public class EnemyFollow : MonoBehaviour
         }
     }
 
-    IEnumerator FlashAndDie()
+    protected virtual IEnumerator FlashAndDie() // Made virtual
     {
         isDying = true;
         GetComponent<Collider2D>().enabled = false;
@@ -122,14 +133,13 @@ public class EnemyFollow : MonoBehaviour
         Destroy(gameObject);
     }
 
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRadius);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision) // Made virtual
     {
         if (collision.CompareTag("Projectile"))
         {
@@ -144,14 +154,15 @@ public class EnemyFollow : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnTriggerExit2D(Collider2D collision) // Made virtual
     {
         if (collision.CompareTag("Player"))
         {
             isPlayerInAttackRange = false;
         }
     }
-    public void Die()
+
+    public virtual void Die() // Made virtual
     {
         if (isDying) return;
         this.enabled = false;
@@ -169,5 +180,4 @@ public class EnemyFollow : MonoBehaviour
 
         Destroy(gameObject, 1f); // Cho phép 1s để animation Die chạy nếu có
     }
-
 }

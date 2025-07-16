@@ -30,7 +30,7 @@ public class PlayerControl : MonoBehaviour
 
     private bool isCharging = false;
 
-
+    [SerializeField] private AudioManager audioManager;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -53,6 +53,7 @@ public class PlayerControl : MonoBehaviour
 
         hudController.UpdateHealth(currentHealth / maxHealth);
 
+        audioManager.playBackGroundClip();
     }
 
     void Update()
