@@ -19,8 +19,8 @@ public class PlayerControl : MonoBehaviour
 
     private bool isPauseMenuLoaded = false;
 
-    public GameObject projectilePrefab;  // Prefab viên chưởng
-    public Transform chargePoint;        // Vị trí bắn chưởng
+    public GameObject projectilePrefab;  
+    public Transform chargePoint;        
 
     public float maxMana = 100f;
     private float currentMana;
@@ -60,18 +60,10 @@ public class PlayerControl : MonoBehaviour
     {
         if (InventoryManager.isInventoryOpen)
         {
-            return; // Don't process any input if inventory is open
+            return; 
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (!isPauseMenuLoaded)
-            {
-                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
-                Time.timeScale = 0f;
-                isPauseMenuLoaded = true;
-            }
-        }
+        
 
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
