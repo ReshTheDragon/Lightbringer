@@ -7,23 +7,21 @@ public class SkillBehaviour : MonoBehaviour
     private Vector2 moveDirection;
     private float damage;
 
-    public GameObject hitEffectPrefab; // Prefab hiệu ứng nổ
+    public GameObject hitEffectPrefab;
 
     public void Initialize(Vector2 direction, float skillDamage = 10f)
     {
         moveDirection = direction.normalized;
         damage = skillDamage;
 
-        var sr = GetComponent<SpriteRenderer>();
-        if (sr != null)
-        {
-            sr.flipX = direction.x < 0;
-        }
+        // Xoay theo hướng di chuyển
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     void Update()
     {
-        transform.Translate(moveDirection * speed * Time.deltaTime);
+        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
     }
 
     void Start()
@@ -35,20 +33,15 @@ public class SkillBehaviour : MonoBehaviour
     {
         if (collision.CompareTag("Enemy"))
         {
-            // Gây damage
             if (collision.GetComponent<EnemyFollow>() != null)
                 collision.GetComponent<EnemyFollow>().TakeHit(transform.position, 3f, damage);
             else if (collision.GetComponent<BossController>() != null)
                 collision.GetComponent<BossController>().TakeDamage((int)damage);
 
-            // Tạo hiệu ứng nổ tại vị trí va chạm
             if (hitEffectPrefab != null)
-            {
                 Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
-            }
 
             Destroy(gameObject);
         }
     }
 }
-

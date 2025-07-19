@@ -10,7 +10,7 @@ public class PlayerSkillController : MonoBehaviour
     private float[] cooldownTimers = new float[4];
 
     public Image[] skillImages;              // Các ô UI để làm cooldown fill
-    public float detectRadius = 5f;          // Phát hiện enemy gần
+    public float detectRadius = 10f;          // Phát hiện enemy gần
 
     void Update()
     {
