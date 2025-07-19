@@ -49050,7 +49050,7 @@ MonoBehaviour:
   - {fileID: 756402234}
   - {fileID: 1801044940}
   - {fileID: 1647519636}
-  detectRadius: 5
+  detectRadius: 10
 --- !u!95 &624220545
 Animator:
   serializedVersion: 7
@@ -49742,9 +49742,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8953759347016164312, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 495205945644984843, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1090160283}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
 --- !u!1 &718696252
@@ -50453,6 +50460,78 @@ MonoBehaviour:
   currentItem: {fileID: 11400000, guid: d9f01ad5ef043ed44aa3b7bab17ca3ea, type: 2}
   quantity: 0
   slotIndex: 0
+--- !u!1 &1090160282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1090160283}
+  - component: {fileID: 1090160285}
+  - component: {fileID: 1090160284}
+  m_Layer: 5
+  m_Name: RawImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1090160283
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090160282}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1430965022}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 10}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1090160284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090160282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: 9d5f6625b0b035841a1153f7e5466a94, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &1090160285
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090160282}
+  m_CullTransparentMesh: 1
 --- !u!1 &1092130966
 GameObject:
   m_ObjectHideFlags: 0
@@ -53490,6 +53569,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &1430965022 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 495205945644984843, guid: ff84b1a698c0b16468571eb098f6493e, type: 3}
+  m_PrefabInstance: {fileID: 695855709}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1452181230
 GameObject:
   m_ObjectHideFlags: 0
@@ -54411,7 +54495,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   hpBar: {fileID: 1430965020}
-  maxHp: 10
+  maxHp: 100
   moveSpeed: 10
   enterDamage: 10
   stayDamage: 1
@@ -54420,7 +54504,7 @@ MonoBehaviour:
   rangedAttackDamage: 15
   rangedAttackPrefab: {fileID: 2209176688347403465, guid: 4042a9fe83ae0584aaea2d08da941031, type: 3}
   spellCastTime: 1.5
-  summonEnemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
+  summonEnemyPrefab: {fileID: 4813797213235426364, guid: 6e4faf7d04f15ab4c8b5c75abbf1cd58, type: 3}
   summonCount: 10
   summonRadius: 10
   summonDelay: 1
