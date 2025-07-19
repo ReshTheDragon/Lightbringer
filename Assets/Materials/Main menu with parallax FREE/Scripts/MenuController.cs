@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
@@ -213,8 +214,77 @@ public class MenuController : MonoBehaviour
     }
 
     // Start Game - Load game scene
+    public void resetInventoryJSON()
+    {
+        // Đường dẫn tới file JSON
+        string filePath = Path.Combine(Application.persistentDataPath, "inventory.json");
+
+        // Tạo dữ liệu rỗng
+        string emptyInventoryJSON = @"{
+        ""hotbarSlots"": [
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            }
+        ],
+        ""inventorySlots"": [
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            }
+        ]
+    }";
+
+        // Ghi file
+        File.WriteAllText(filePath, emptyInventoryJSON);
+    }
+
+    // Sửa lại function startGame
     public void startGame()
     {
+        // Reset inventory JSON trước khi load scene
+        resetInventoryJSON();
+
         if (!string.IsNullOrEmpty(gameSceneName))
         {
             SceneManager.LoadScene(gameSceneName);

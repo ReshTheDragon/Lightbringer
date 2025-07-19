@@ -5,25 +5,26 @@ using System.IO;
 
 public class SettingsController : MonoBehaviour
 {
+    [Header("UI Components")]
     public Toggle fullscreenToggle;
-    public Dropdown resolutionDrop;
-    public Dropdown textQualityDrop;
-    public Dropdown antialiasingDrop;
-    public Dropdown vSyncDrop;
     public Slider volume;
     public Button saveButton;
-    public Resolution[] resolutions;
-    public Settings gameSettings;
 
+    [Header("Settings")]
+    public Settings gameSettings;
     private string settingsPath;
 
     void OnEnable()
     {
         settingsPath = Application.persistentDataPath + "/gamesettings.json";
+
+        // Add listeners
         fullscreenToggle.onValueChanged.AddListener(delegate { FullscreenToggle(); });
         volume.onValueChanged.AddListener(delegate { VolumeChange(); });
-        saveButton.onClick.AddListener(delegate { saveSettings(); });
-        loadSettings();
+        saveButton.onClick.AddListener(delegate { SaveSettings(); });
+
+        // Load existing settings
+        LoadSettings();
     }
 
     public void FullscreenToggle()
@@ -38,14 +39,20 @@ public class SettingsController : MonoBehaviour
         AudioListener.volume = volume.value;
     }
 
-    public void saveSettings()
+    public void SaveSettings()
     {
         string jsonData = JsonUtility.ToJson(gameSettings, true);
         File.WriteAllText(settingsPath, jsonData);
-        MenuController.instance.closeOptions();
+        Debug.Log("Settings saved successfully!");
+
+        // Close options menu
+        if (MenuController.instance != null)
+        {
+            MenuController.instance.closeOptions();
+        }
     }
 
-    public void loadSettings()
+    public void LoadSettings()
     {
         if (File.Exists(settingsPath))
         {
@@ -53,24 +60,39 @@ public class SettingsController : MonoBehaviour
             {
                 string json = File.ReadAllText(settingsPath);
                 gameSettings = JsonUtility.FromJson<Settings>(json);
+                Debug.Log("Settings loaded successfully!");
             }
-            catch
+            catch (System.Exception e)
             {
-                Debug.LogWarning("Lỗi đọc file cài đặt. Sử dụng mặc định.");
+                Debug.LogWarning("Error loading settings file: " + e.Message + ". Using default settings.");
                 gameSettings = new Settings();
             }
         }
         else
         {
-            Debug.Log("Chưa có file cài đặt. Tạo mới.");
+            Debug.Log("No settings file found. Creating new default settings.");
             gameSettings = new Settings();
         }
 
-        // Gán lại UI từ giá trị settings
+        // Apply settings to UI
         fullscreenToggle.isOn = gameSettings.fullscreen;
         volume.value = gameSettings.volume;
-        // Áp dụng settings
-        FullscreenToggle();
-        VolumeChange();
+
+        // Apply settings to game
+        ApplySettings();
+    }
+
+    private void ApplySettings()
+    {
+        Screen.fullScreen = gameSettings.fullscreen;
+        AudioListener.volume = gameSettings.volume;
+    }
+
+    void OnDisable()
+    {
+        // Remove listeners to prevent memory leaks
+        fullscreenToggle.onValueChanged.RemoveAllListeners();
+        volume.onValueChanged.RemoveAllListeners();
+        saveButton.onClick.RemoveAllListeners();
     }
 }
