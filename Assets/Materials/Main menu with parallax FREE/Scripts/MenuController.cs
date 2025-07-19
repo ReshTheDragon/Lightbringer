@@ -63,6 +63,8 @@ public class MenuController : MonoBehaviour
     public string gameSceneName = "Ground Level";
     public int gameSceneIndex = 1;
 
+    public string howToPlayScene = "HowToPlay";
+    public int howToPlaySceneIndex = 5;
     void Start()
     {
         Audio = gameObject.GetComponent<AudioSource>();
@@ -172,10 +174,13 @@ public class MenuController : MonoBehaviour
             case 0: // Play
                 startGame();
                 break;
-            case 1: // Settings
+            case 1: // How To Play
+                openHowToPlay();
+                break;
+            case 2: // Settings
                 openOptions();
                 break;
-            case 2: // Exit
+            case 3: // Exit
                 exitMenuOpen();
                 break;
         }
@@ -292,6 +297,19 @@ public class MenuController : MonoBehaviour
         else
         {
             SceneManager.LoadScene(1);
+        }
+    }
+
+    public void openHowToPlay()
+    {
+        resetInventoryJSON();
+        if (!string.IsNullOrEmpty(howToPlayScene))
+        {
+            SceneManager.LoadScene(howToPlayScene);
+        }
+        else
+        {
+            SceneManager.LoadScene(5);
         }
     }
 
