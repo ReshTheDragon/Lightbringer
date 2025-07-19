@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
@@ -62,6 +63,8 @@ public class MenuController : MonoBehaviour
     public string gameSceneName = "Ground Level";
     public int gameSceneIndex = 1;
 
+    public string howToPlayScene = "HowToPlay";
+    public int howToPlaySceneIndex = 5;
     void Start()
     {
         Audio = gameObject.GetComponent<AudioSource>();
@@ -171,10 +174,13 @@ public class MenuController : MonoBehaviour
             case 0: // Play
                 startGame();
                 break;
-            case 1: // Settings
+            case 1: // How To Play
+                openHowToPlay();
+                break;
+            case 2: // Settings
                 openOptions();
                 break;
-            case 2: // Exit
+            case 3: // Exit
                 exitMenuOpen();
                 break;
         }
@@ -213,8 +219,77 @@ public class MenuController : MonoBehaviour
     }
 
     // Start Game - Load game scene
+    public void resetInventoryJSON()
+    {
+        // Đường dẫn tới file JSON
+        string filePath = Path.Combine(Application.persistentDataPath, "inventory.json");
+
+        // Tạo dữ liệu rỗng
+        string emptyInventoryJSON = @"{
+        ""hotbarSlots"": [
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            }
+        ],
+        ""inventorySlots"": [
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            },
+            {
+                ""itemName"": """",
+                ""quantity"": 0
+            }
+        ]
+    }";
+
+        // Ghi file
+        File.WriteAllText(filePath, emptyInventoryJSON);
+    }
+
+    // Sửa lại function startGame
     public void startGame()
     {
+        // Reset inventory JSON trước khi load scene
+        resetInventoryJSON();
+
         if (!string.IsNullOrEmpty(gameSceneName))
         {
             SceneManager.LoadScene(gameSceneName);
@@ -222,6 +297,19 @@ public class MenuController : MonoBehaviour
         else
         {
             SceneManager.LoadScene(1);
+        }
+    }
+
+    public void openHowToPlay()
+    {
+        resetInventoryJSON();
+        if (!string.IsNullOrEmpty(howToPlayScene))
+        {
+            SceneManager.LoadScene(howToPlayScene);
+        }
+        else
+        {
+            SceneManager.LoadScene(5);
         }
     }
 
