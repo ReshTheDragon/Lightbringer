@@ -67,16 +67,6 @@ public class PlayerControl : MonoBehaviour
             return; // Don't process any input if inventory is open
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (!isPauseMenuLoaded)
-            {
-                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
-                Time.timeScale = 0f;
-                isPauseMenuLoaded = true;
-            }
-        }
-
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
