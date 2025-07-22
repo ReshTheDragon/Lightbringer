@@ -49255,7 +49255,7 @@ MonoBehaviour:
   attackPoint: {fileID: 1528270405}
   maxStamina: 100
   maxMana: 100
-  maxHealth: 10000
+  maxHealth: 600
   skillPrefabs:
   - {fileID: 0}
   - {fileID: 0}
