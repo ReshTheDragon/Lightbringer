@@ -222,7 +222,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 20daa800a641d9e4cae18a06630db1ef, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.6075471, g: 0.57201135, b: 0.57201135, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -313,6 +313,7 @@ MonoBehaviour:
   attackDamage: 10
   attackCooldown: 1
   healthBarPrefab: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
+  linkedPortal: {fileID: 0}
 --- !u!95 &183574341661078585
 Animator:
   serializedVersion: 7

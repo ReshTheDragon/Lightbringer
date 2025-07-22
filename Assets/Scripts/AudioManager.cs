@@ -6,7 +6,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip healthClip;
     [SerializeField] private AudioClip backgroundClip;
-    
+    [SerializeField] private AudioClip skillClip;
+    [SerializeField] private AudioClip sliceClip;
+
+
 
     public void playShootSound()
     {
@@ -20,8 +23,12 @@ public class AudioManager : MonoBehaviour
     {
         backgroundMusic.PlayOneShot(backgroundClip);
     }
-    //public void playExplosionSound()
-    //{
-    //    backgroundMusic.PlayOneShot(explosionClip);
-    //}
+    public void playSkillClip()
+    {
+        backgroundMusic.PlayOneShot(skillClip);
+    }
+    public void playSliceClip()
+    {
+        backgroundMusic.PlayOneShot(sliceClip);
+    }
 }

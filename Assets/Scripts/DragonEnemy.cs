@@ -6,6 +6,7 @@ public class DragonEnemy : EnemyFollow
 
     [Header("Portal Integration")]
     public Portal linkedPortal; // Kéo thả portal vào đây trong Inspector
+    [SerializeField] private AudioManager audioManager;
 
     protected override void Start()
     {

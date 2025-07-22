@@ -16,6 +16,8 @@ public class GunController : MonoBehaviour
     private bool playerInRange = false;
     private bool wasPlayerInRange = false; // Theo dõi trạng thái trước đó
 
+    [SerializeField] private AudioManager audioManager;
+
     void Start()
     {
         if (player == null)
@@ -96,7 +98,8 @@ public class GunController : MonoBehaviour
             Vector3 direction = (player.position - transform.position).normalized;
             Quaternion inverseRotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
             Instantiate(bulletPrefabs, firePos.position, inverseRotation);
-            
+            audioManager.playShootSound();
+
         }
     }
 
