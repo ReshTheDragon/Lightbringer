@@ -17,23 +17,26 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
-    void Update()
+   void Update()
+{
+    if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
     {
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
+        Debug.Log("Inventory slots: " + InventoryManager.Instance.inventorySlots.Length);
+        Debug.Log("Hotbar slots: " + InventoryManager.Instance.hotbarSlots.Length);
+
+        if (InventoryManager.Instance.AddItemToHotbar(item, quantity))
         {
-            if (InventoryManager.Instance.AddItemToHotbar(item, quantity))
-            {
-                Debug.Log($"Picked up {quantity} {item.itemName}(s) to hotbar!");
-                Destroy(gameObject);
-            }
-            else
-            {
-                InventoryManager.Instance.AddItemToInventory(item, quantity);
-                Debug.Log($"Picked up {quantity} {item.itemName}(s) to inventory!");
-                Destroy(gameObject);
-            }
+            Debug.Log($"Picked up {quantity} {item.itemName}(s) to hotbar!");
+            Destroy(gameObject);
+        }
+        else
+        {
+            InventoryManager.Instance.AddItemToInventory(item, quantity);
+            Debug.Log($"Picked up {quantity} {item.itemName}(s) to inventory!");
+            Destroy(gameObject);
         }
     }
+}
 
     private void OnTriggerEnter2D(Collider2D other)
     {

@@ -22,6 +22,8 @@ public class InventorySetup : MonoBehaviour
             InventoryManager.Instance.inventoryUI = inventoryUI;
 
             InventoryManager.Instance.ClearAllSlots();
+            InventoryManager.Instance.LoadInventoryFromJSON(); // Đảm bảo load lại sau khi setup slot
+            Debug.Log("Inventory and hotbar slots have been set up successfully.");
         }
     }
 }
