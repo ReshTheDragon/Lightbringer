@@ -202533,7 +202533,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1019838720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203316,8 +203316,8 @@ MonoBehaviour:
   shootClip: {fileID: 8300000, guid: bb86b3822d3984f4881124bfdbccac0b, type: 3}
   healthClip: {fileID: 8300000, guid: 68c5b93411ad2244d9750f3644523a6d, type: 3}
   backgroundClip: {fileID: 8300000, guid: 339e684c55c12654e95a897f5aa2efdb, type: 3}
-  skillClip: {fileID: 0}
-  sliceClip: {fileID: 0}
+  skillClip: {fileID: 8300000, guid: 223ddddcf59d6274abd25468b6db90c1, type: 3}
+  sliceClip: {fileID: 8300000, guid: 04e7390f4c0bb514fb9a30c05403a750, type: 3}
 --- !u!4 &1204370217
 Transform:
   m_ObjectHideFlags: 0
