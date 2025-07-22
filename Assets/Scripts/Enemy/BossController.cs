@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 public class BossController : MonoBehaviour
 {
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip meleeAttackClip; // sound for close attack
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip deathClip;
+
     private Vector3 originalScale;
     private Rigidbody2D rb;
     private Animator animator;
@@ -52,6 +58,8 @@ public class BossController : MonoBehaviour
         animator = GetComponent<Animator>();
         player = FindAnyObjectByType<PlayerControl>();
         originalScale = transform.localScale;
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     private void Update()
@@ -187,9 +195,15 @@ public class BossController : MonoBehaviour
     {
         
         rb.linearVelocity = Vector2.zero;
-        this.enabled = false; 
+        this.enabled = false;
 
-        
+
+        if (deathClip != null)
+        {
+            audioSource.PlayOneShot(deathClip);
+        }
+
+
         animator.SetTrigger("IsDie");
        
 
@@ -204,16 +218,18 @@ public class BossController : MonoBehaviour
 
         KillAllMinions();
 
-      
-        yield return new WaitForSeconds(1f);
+        // Wait for sound duration or fallback to 1 second if no clip
+        float deathSoundDuration = (deathClip != null) ? deathClip.length : 1f;
+        yield return new WaitForSeconds(deathSoundDuration);
+
         PlayerPrefs.SetInt("IsWin", 1);
 
         Debug.Log("Loading ending scene...");
         UnityEngine.SceneManagement.SceneManager.LoadScene("EndingScene");
 
-       
         Destroy(gameObject);
     }
+
 
     private void KillAllMinions()
     {
@@ -235,10 +251,13 @@ public class BossController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
         if (collision.CompareTag("Player") && player != null)
         {
             animator.SetBool("IsAttack", true);
+            audioSource.PlayOneShot(meleeAttackClip);
             player.TakeDamage(enterDamage);
+
         }
     }
 
@@ -248,6 +267,7 @@ public class BossController : MonoBehaviour
         {
             player.TakeDamage(stayDamage);
         }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
