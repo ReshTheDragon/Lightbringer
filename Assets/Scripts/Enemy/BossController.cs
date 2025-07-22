@@ -59,10 +59,10 @@ public class BossController : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
-        MoveToPlayer();
 
         FlipTowardPlayer();
 
+        // Chỉ di chuyển và cast khi KHÔNG đang cast
         if (!isCasting)
         {
             if (distanceToPlayer > rangedRange && canCast)
@@ -71,8 +71,14 @@ public class BossController : MonoBehaviour
             }
             else
             {
+                // Chỉ di chuyển khi không cast spell
                 MoveToPlayer();
             }
+        }
+        else
+        {
+            // Khi đang cast, dừng animation walking
+            animator.SetBool("IsWalking", false);
         }
     }
 
