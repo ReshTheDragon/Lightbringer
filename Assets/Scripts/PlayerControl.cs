@@ -19,8 +19,6 @@ public class PlayerControl : MonoBehaviour
 
     private bool isPauseMenuLoaded = false;
 
-    public GameObject projectilePrefab;  
-    public Transform chargePoint;        
 
     public float maxMana = 100f;
     private float currentMana;
@@ -28,7 +26,13 @@ public class PlayerControl : MonoBehaviour
     public float maxHealth = 100f;
     private float currentHealth;
 
-    private bool isCharging = false;
+    public GameObject[] skillPrefabs = new GameObject[4]; // gán trong Inspector
+    public Transform skillSpawnPoint;                      // giống như FirePoint
+    private float[] skillManaCosts = new float[4] { 10f, 20f, 30f, 40f };
+    private float[] skillCooldowns = new float[4] { 5f, 10f, 15f, 20f };
+    private float[] skillCooldownTimers = new float[4];
+    private Vector2 lastMoveDirection = Vector2.right; // mặc định hướng phải
+
 
     [SerializeField] private AudioManager audioManager;
     void Start()
@@ -60,10 +64,18 @@ public class PlayerControl : MonoBehaviour
     {
         if (InventoryManager.isInventoryOpen)
         {
-            return; 
+            return; // Don't process any input if inventory is open
         }
 
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPauseMenuLoaded)
+            {
+                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
+                Time.timeScale = 0f;
+                isPauseMenuLoaded = true;
+            }
+        }
 
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
@@ -85,9 +97,21 @@ public class PlayerControl : MonoBehaviour
             localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1 : 1);
             attackPoint.localPosition = localPos;
         }
+        // Flip skillSpawnPoint theo hướng nhân vật
+        if (skillSpawnPoint != null)
+        {
+            Vector3 localPos = skillSpawnPoint.localPosition;
+            localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1 : 1);
+            skillSpawnPoint.localPosition = localPos;
+        }
+
+        if (move.sqrMagnitude > 0.01f)
+        {
+            lastMoveDirection = move;
+        }
 
         // Kiểm tra stamina đủ mới cho đánh
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.J))
         {
             if (currentStamina >= 17f)
             {
@@ -116,31 +140,6 @@ public class PlayerControl : MonoBehaviour
             hudController.UpdateStamina(currentStamina / maxStamina);
         }
 
-
-        // Bắt đầu giữ chuột phải để charge
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (currentMana > 0)
-            {
-                isCharging = true;
-                animator.SetBool("IsCharging", true); // nếu có animation charge thì kích hoạt
-            }
-            else
-            {
-                Debug.Log("Not enough mana to start charging!");
-            }
-        }
-
-
-
-        // Nhả chuột phải để bắn
-        if (Input.GetMouseButtonUp(1) && isCharging)
-        {
-            ShootSkill();
-            isCharging = false;
-            animator.SetBool("IsCharging", false);
-        }
-
         if (currentMana < maxMana)
         {
             currentMana += 1f * Time.deltaTime;
@@ -156,13 +155,6 @@ public class PlayerControl : MonoBehaviour
             attackPoint.localPosition = localPos;
         }
 
-        if (chargePoint != null)
-        {
-            Vector3 chargeLocalPos = chargePoint.localPosition;
-            chargeLocalPos.x = Mathf.Abs(chargeLocalPos.x) * (spriteRenderer.flipX ? -1 : 1);
-            chargePoint.localPosition = chargeLocalPos;
-        }
-
         // Use hotbar items
         for (int i = 0; i < 5; i++)
         {
@@ -171,6 +163,18 @@ public class PlayerControl : MonoBehaviour
                 UseHotbarItem(i);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.U)) TryCastSkill(0);
+        if (Input.GetKeyDown(KeyCode.I)) TryCastSkill(1);
+        if (Input.GetKeyDown(KeyCode.O)) TryCastSkill(2);
+        if (Input.GetKeyDown(KeyCode.P)) TryCastSkill(3);
+
+        for (int i = 0; i < skillCooldownTimers.Length; i++)
+        {
+            if (skillCooldownTimers[i] > 0)
+                skillCooldownTimers[i] -= Time.deltaTime;
+        }
+
     }
 
     void UseHotbarItem(int index)
@@ -202,39 +206,7 @@ public class PlayerControl : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    void ShootSkill()
-    {
-        if (currentMana >= 17f)
-        {
-            GameObject proj = Instantiate(projectilePrefab, chargePoint.position, Quaternion.identity);
-
-            // Tính hướng bắn
-            Vector2 shootDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - chargePoint.position).normalized;
-
-            // Gán vận tốc
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = shootDir * 25f;
-
-            // Gán flip cho projectile
-            SpriteRenderer projSprite = proj.GetComponent<SpriteRenderer>();
-            if (projSprite != null)
-            {
-                projSprite.flipX = spriteRenderer.flipX; // đây là player spriteRenderer
-            }
-
-            // Trừ mana
-            currentMana -= 17f;
-            if (currentMana < 0) currentMana = 0;
-            hudController.UpdateMana(currentMana / maxMana);
-
-            Debug.Log("Skill fired!");
-
-        }
-        else
-        {
-            Debug.Log("Not enough mana to shoot!");
-        }
-    }
+ 
 
     public void RestoreMana(float amount)
     {
@@ -298,5 +270,70 @@ public class PlayerControl : MonoBehaviour
         SceneManager.LoadScene("EndingScene");
     }
 
+    void TryCastSkill(int index)
+    {
+        if (index < 0 || index >= skillPrefabs.Length) return;
+
+        if (skillCooldownTimers[index] > 0f)
+        {
+            Debug.Log("Skill " + index + " is on cooldown.");
+            return;
+        }
+
+        float manaCost = skillManaCosts[index];
+        if (currentMana < manaCost)
+        {
+            Debug.Log("Not enough mana to cast skill " + index);
+            return;
+        }
+
+        currentMana -= manaCost;
+        hudController.UpdateMana(currentMana / maxMana);
+
+        // Hướng bắn: kẻ địch gần nhất, nếu không có thì dùng hướng đi gần nhất
+        Vector2 dir = FindEnemyDirection();
+        if (dir == Vector2.zero)
+        {
+            dir = spriteRenderer.flipX ? Vector2.left : Vector2.right;
+        }
+
+
+        GameObject skill = Instantiate(skillPrefabs[index], skillSpawnPoint.position, Quaternion.identity);
+        SkillBehaviour sb = skill.GetComponent<SkillBehaviour>();
+        if (sb != null)
+        {
+            float damage = skillManaCosts[index];
+            sb.Initialize(dir, damage);
+        }
+
+        skillCooldownTimers[index] = skillCooldowns[index];
+    }
+
+
+    Vector2 FindEnemyDirection()
+    {
+        float radius = 5f;
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, radius);
+
+        Transform nearest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (var col in enemies)
+        {
+            if (col.CompareTag("Enemy"))
+            {
+                float dist = Vector2.Distance(transform.position, col.transform.position);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearest = col.transform;
+                }
+            }
+        }
+
+        if (nearest != null)
+            return (nearest.position - transform.position).normalized;
+        return Vector2.zero;
+    }
 
 }

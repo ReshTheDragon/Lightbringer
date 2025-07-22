@@ -11,6 +11,8 @@ TagManager:
   - Enemy
   - Map
   - InventoryUI
+  - PlayerFire
+  - Explosion
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - 
+  - Skill
   - 
   - Boss
   - 'Player '

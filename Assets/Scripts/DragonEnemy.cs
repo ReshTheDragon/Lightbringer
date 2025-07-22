@@ -37,17 +37,28 @@ public class DragonEnemy : EnemyFollow
     }
 
 
-    // Override method TakeHit để Dragon có phản ứng khác
     public override void TakeHit(Vector3 attackerPos, float force, float damage)
     {
-        // Dragon chỉ nhận 80% damage (có armor)
+        // Dragon chỉ nhận 80% damage từ skill
         float reducedDamage = damage * 0.8f;
-        base.TakeHit(attackerPos, force * 0.5f, reducedDamage); // Cũng giảm knockback
 
-        Debug.Log($"Dragon took reduced damage: {reducedDamage}");
+        base.TakeHit(attackerPos, force * 0.5f, reducedDamage);
+
+        Debug.Log($"🐉 Dragon bị trúng chiêu và nhận {reducedDamage} damage!");
+
+        // Tùy chọn: Thêm hiệu ứng hoặc hành vi riêng
+        StartCoroutine(StunBriefly());
     }
 
-   
+    private System.Collections.IEnumerator StunBriefly()
+    {
+        speed = 0f; // dừng di chuyển
+        yield return new WaitForSeconds(1f);
+        speed = 1.5f; // trở lại bình thường
+    }
+
+
+
 
 
 }
