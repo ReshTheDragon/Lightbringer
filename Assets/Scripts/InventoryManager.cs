@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class InventoryData
@@ -40,81 +42,102 @@ public class InventoryManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             savePath = Path.Combine(Application.persistentDataPath, "inventory.json");
+            Debug.Log($"InventoryManager initialized. Save path: {savePath}");
         }
         else
         {
             Destroy(gameObject);
-            return;
+            Debug.LogWarning("Duplicate InventoryManager detected, destroying this instance.");
         }
     }
 
     void Start()
     {
+        // Khởi tạo inventorySlots và hotbarSlots nếu chưa có
+        if (inventorySlots == null || inventorySlots.Length == 0)
+        {
+            Debug.LogWarning("Inventory slots not assigned. Attempting to find them.");
+            RefreshSlotReferences();
+        }
+        if (hotbarSlots == null || hotbarSlots.Length == 0)
+        {
+            Debug.LogWarning("Hotbar slots not assigned. Attempting to find them.");
+            RefreshSlotReferences();
+        }
+
         ClearAllSlots();
-
-        // Delay để đảm bảo UI đã được khởi tạo
         StartCoroutine(DelayedStart());
-
-        if (inventorySlots.Length == 0)
-            Debug.LogError("Inventory slots are not assigned in the InventoryManager!");
-        if (hotbarSlots.Length == 0)
-            Debug.LogError("Hotbar slots are not assigned in the InventoryManager!");
     }
 
-    private System.Collections.IEnumerator DelayedStart()
+    private IEnumerator DelayedStart()
     {
         yield return new WaitForSeconds(0.1f);
         LoadInventoryFromJSON();
+        if (inventoryUI != null)
+        {
+            inventoryUI.SetActive(true);
+            Debug.Log("Inventory UI activated on start.");
+        }
     }
 
-    // Lưu inventory vào JSON file
     public void SaveInventoryToJSON()
     {
         InventoryData data = new InventoryData();
 
+        // Kiểm tra và khởi tạo mảng nếu null
+        if (hotbarSlots == null) hotbarSlots = new InventorySlot[0];
+        if (inventorySlots == null) inventorySlots = new InventorySlot[0];
+
         // Lưu hotbar
         for (int i = 0; i < hotbarSlots.Length; i++)
         {
-            if (hotbarSlots[i].currentItem != null)
+            if (hotbarSlots[i] != null && hotbarSlots[i].currentItem != null)
             {
                 data.hotbarSlots.Add(new SlotData(hotbarSlots[i].currentItem.itemName, hotbarSlots[i].quantity));
+                Debug.Log($"Saving hotbar slot {i}: {hotbarSlots[i].currentItem.itemName}, qty: {hotbarSlots[i].quantity}");
             }
             else
             {
                 data.hotbarSlots.Add(new SlotData("", 0));
+                Debug.Log($"Saving hotbar slot {i}: Empty");
             }
         }
 
         // Lưu inventory
         for (int i = 0; i < inventorySlots.Length; i++)
         {
-            if (inventorySlots[i].currentItem != null)
+            if (inventorySlots[i] != null && inventorySlots[i].currentItem != null)
             {
                 data.inventorySlots.Add(new SlotData(inventorySlots[i].currentItem.itemName, inventorySlots[i].quantity));
+                Debug.Log($"Saving inventory slot {i}: {inventorySlots[i].currentItem.itemName}, qty: {inventorySlots[i].quantity}");
             }
             else
             {
                 data.inventorySlots.Add(new SlotData("", 0));
+                Debug.Log($"Saving inventory slot {i}: Empty");
             }
         }
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);
-        Debug.Log("Inventory saved to JSON: " + savePath);
+        Debug.Log($"Inventory saved to JSON: {savePath}\nJSON content: {json}");
     }
 
-    // Tải inventory từ JSON file
     public void LoadInventoryFromJSON()
     {
         if (File.Exists(savePath))
         {
-            Debug.Log("Loading inventory from: " + savePath);
+            Debug.Log($"Loading inventory from: {savePath}");
             string json = File.ReadAllText(savePath);
-            Debug.Log("JSON content: " + json);
+            Debug.Log($"JSON content: {json}");
 
             InventoryData data = JsonUtility.FromJson<InventoryData>(json);
+            if (data == null)
+            {
+                Debug.LogError("Failed to deserialize JSON data!");
+                return;
+            }
 
-            // Đợi một frame để đảm bảo slots đã được khởi tạo
             StartCoroutine(LoadInventoryCoroutine(data));
         }
         else
@@ -123,13 +146,23 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator LoadInventoryCoroutine(InventoryData data)
+    private IEnumerator LoadInventoryCoroutine(InventoryData data)
     {
         yield return new WaitForEndOfFrame();
+
+        RefreshSlotReferences();
+        Debug.Log($"Hotbar slots count: {hotbarSlots.Length}, Inventory slots count: {inventorySlots.Length}");
+        Debug.Log($"Data hotbar slots: {data.hotbarSlots.Count}, Data inventory slots: {data.inventorySlots.Count}");
 
         // Tải hotbar
         for (int i = 0; i < data.hotbarSlots.Count && i < hotbarSlots.Length; i++)
         {
+            if (hotbarSlots[i] == null)
+            {
+                Debug.LogWarning($"Hotbar slot {i} is null, skipping");
+                continue;
+            }
+
             if (!string.IsNullOrEmpty(data.hotbarSlots[i].itemName))
             {
                 InventoryItem item = FindItemByName(data.hotbarSlots[i].itemName);
@@ -148,6 +181,12 @@ public class InventoryManager : MonoBehaviour
         // Tải inventory
         for (int i = 0; i < data.inventorySlots.Count && i < inventorySlots.Length; i++)
         {
+            if (inventorySlots[i] == null)
+            {
+                Debug.LogWarning($"Inventory slot {i} is null, skipping");
+                continue;
+            }
+
             if (!string.IsNullOrEmpty(data.inventorySlots[i].itemName))
             {
                 InventoryItem item = FindItemByName(data.inventorySlots[i].itemName);
@@ -164,9 +203,13 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log("Inventory loaded from JSON!");
+        if (inventoryUI != null)
+        {
+            inventoryUI.SetActive(true);
+            Debug.Log("Inventory UI activated after load.");
+        }
     }
 
-    // Xóa save file
     public void DeleteSaveFile()
     {
         if (File.Exists(savePath))
@@ -176,7 +219,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // Auto save khi chuyển scene hoặc thoát game
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
@@ -191,83 +233,116 @@ public class InventoryManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        Debug.LogWarning("InventoryManager is being destroyed!");
         SaveInventoryToJSON();
     }
 
-    // Lưu tự động khi có thay đổi
     private void AutoSave()
     {
         SaveInventoryToJSON();
     }
 
-    // Gọi khi scene sắp chuyển
     private void OnEnable()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Khi scene mới load, tự động load inventory
         StartCoroutine(DelayedLoadAfterSceneChange());
     }
 
-    private System.Collections.IEnumerator DelayedLoadAfterSceneChange()
+    private IEnumerator DelayedLoadAfterSceneChange()
     {
-        yield return new WaitForSeconds(0.5f); // Đợi scene khởi tạo hoàn toàn
+        float maxWaitTime = 5f;
+        float waitTime = 0f;
 
-        // Tìm lại UI references
+        // Tìm InventoryPanel
+        while (inventoryUI == null && waitTime < maxWaitTime)
+        {
+            inventoryUI = GameObject.Find("InventoryPanel") ?? GameObject.Find("Panel/InventoryPanel") ?? GameObject.FindWithTag("InventoryUI");
+            waitTime += 0.1f;
+            yield return new WaitForSeconds(0.1f);
+        }
+
         if (inventoryUI == null)
-            inventoryUI = GameObject.Find("InventoryPanel");
+        {
+            Debug.LogError("Failed to find InventoryPanel after scene load!");
+            yield break;
+        }
 
-        // Tìm lại slot references nếu cần
+        Debug.Log($"Found InventoryPanel: {inventoryUI.name}, Active: {inventoryUI.activeSelf}");
+
         RefreshSlotReferences();
+        if (inventorySlots.Length == 0 || hotbarSlots.Length == 0)
+        {
+            Debug.LogError($"No inventory or hotbar slots found! InventoryPanel: {inventoryUI.name}, Children: {inventoryUI.transform.childCount}");
+            yield break;
+        }
 
-        // Load inventory
         LoadInventoryFromJSON();
     }
 
-    // Tìm lại references của slots sau khi chuyển scene
     private void RefreshSlotReferences()
     {
-        // Nếu slots bị mất reference, tìm lại
-        if (inventorySlots == null || inventorySlots.Length == 0)
+        // Tìm InventoryPanel
+        GameObject inventoryPanel = GameObject.Find("InventoryPanel") ?? GameObject.Find("Panel/InventoryPanel") ?? GameObject.FindWithTag("InventoryUI");
+        if (inventoryPanel != null)
         {
-            GameObject inventoryPanel = GameObject.Find("InventoryPanel");
-            if (inventoryPanel != null)
+            inventorySlots = inventoryPanel.GetComponentsInChildren<InventorySlot>(true);
+            Debug.Log($"Found InventoryPanel: {inventoryPanel.name}, Slots found: {inventorySlots.Length}");
+            for (int i = 0; i < inventorySlots.Length; i++)
             {
-                inventorySlots = inventoryPanel.GetComponentsInChildren<InventorySlot>();
+                Debug.Log($"Inventory slot {i}: {(inventorySlots[i] != null ? inventorySlots[i].gameObject.name : "null")}");
             }
         }
-
-        if (hotbarSlots == null || hotbarSlots.Length == 0)
+        else
         {
-            GameObject hotbarPanel = GameObject.Find("HotbarPanel");
-            if (hotbarPanel != null)
+            inventorySlots = new InventorySlot[0];
+            Debug.LogError("InventoryPanel not found, setting inventorySlots to empty array.");
+        }
+
+        // Tìm HotbarPanel
+        GameObject hotbarPanel = GameObject.Find("HotbarPanel") ?? GameObject.Find("Panel/HotbarPanel") ?? GameObject.FindWithTag("HotbarPanel");
+        if (hotbarPanel != null)
+        {
+            hotbarSlots = hotbarPanel.GetComponentsInChildren<InventorySlot>(true);
+            Debug.Log($"Found HotbarPanel: {hotbarPanel.name}, Slots found: {hotbarSlots.Length}");
+            for (int i = 0; i < hotbarSlots.Length; i++)
             {
-                hotbarSlots = hotbarPanel.GetComponentsInChildren<InventorySlot>();
+                Debug.Log($"Hotbar slot {i}: {(hotbarSlots[i] != null ? hotbarSlots[i].gameObject.name : "null")}");
             }
+        }
+        else
+        {
+            hotbarSlots = new InventorySlot[0];
+            Debug.LogError("HotbarPanel not found, setting hotbarSlots to empty array.");
         }
     }
 
-    // Các phương thức cũ giữ nguyên...
     public void ClearAllSlots()
     {
-        foreach (var slot in hotbarSlots)
+        if (hotbarSlots != null)
         {
-            if (slot != null && slot.gameObject != null)
-                slot.ClearSlot();
+            foreach (var slot in hotbarSlots)
+            {
+                if (slot != null && slot.gameObject != null)
+                    slot.ClearSlot();
+            }
         }
 
-        foreach (var slot in inventorySlots)
+        if (inventorySlots != null)
         {
-            if (slot != null && slot.gameObject != null)
-                slot.ClearSlot();
+            foreach (var slot in inventorySlots)
+            {
+                if (slot != null && slot.gameObject != null)
+                    slot.ClearSlot();
+            }
         }
     }
 
@@ -277,9 +352,10 @@ public class InventoryManager : MonoBehaviour
     {
         if (inventoryUI == null)
         {
-            inventoryUI = GameObject.Find("InventoryPanel");
+            inventoryUI = GameObject.Find("InventoryPanel") ?? GameObject.Find("Panel/InventoryPanel") ?? GameObject.FindWithTag("InventoryUI");
             if (inventoryUI == null)
             {
+                Debug.LogError("InventoryUI not found!");
                 return;
             }
         }
@@ -302,38 +378,46 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        // Phím F5 để lưu thủ công (giữ lại cho debug)
         if (Input.GetKeyDown(KeyCode.F5))
         {
             SaveInventoryToJSON();
         }
 
-        // Phím F9 để load thủ công (giữ lại cho debug)
         if (Input.GetKeyDown(KeyCode.F9))
         {
             LoadInventoryFromJSON();
         }
 
-        // Phím F6 để test tìm item
         if (Input.GetKeyDown(KeyCode.F6))
         {
             InventoryItem testItem = FindItemByName("Health");
-            if (testItem != null)
-                Debug.Log("Found Health item: " + testItem.name);
-            else
-                Debug.Log("Health item not found!");
+            Debug.Log(testItem != null ? $"Found Health item: {testItem.name}" : "Health item not found!");
+        }
+
+        if (Input.GetKeyDown(KeyCode.F8)) // Thêm phím để xóa file JSON
+        {
+            DeleteSaveFile();
         }
     }
 
     private InventoryItem FindItemByName(string itemName)
     {
-        // Tìm trong Resources/Items
+        if (string.IsNullOrEmpty(itemName))
+        {
+            Debug.LogError("FindItemByName called with null or empty itemName!");
+            return null;
+        }
+
         InventoryItem[] allItems = Resources.LoadAll<InventoryItem>("Items");
-        Debug.Log($"Found {allItems.Length} items in Resources/Items");
+        Debug.Log($"Searching for item: {itemName}. Found {allItems.Length} items in Resources/Items");
 
         foreach (InventoryItem item in allItems)
         {
-            Debug.Log($"Checking item: {item.itemName} vs {itemName}");
+            if (item == null)
+            {
+                Debug.LogWarning("Found null item in Resources/Items!");
+                continue;
+            }
             if (item.itemName.Equals(itemName, System.StringComparison.OrdinalIgnoreCase))
             {
                 Debug.Log($"Found matching item: {item.itemName}");
@@ -341,49 +425,49 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        // Nếu không tìm thấy trong Resources, thử tìm trong toàn bộ project
-        InventoryItem[] allProjectItems = FindObjectsOfType<InventoryItem>();
-        foreach (InventoryItem item in allProjectItems)
-        {
-            if (item.itemName.Equals(itemName, System.StringComparison.OrdinalIgnoreCase))
-            {
-                return item;
-            }
-        }
-
-        Debug.LogWarning($"Item not found: {itemName}");
+        Debug.LogWarning($"Item not found in Resources: {itemName}");
         return null;
     }
 
-    // Các phương thức khác giữ nguyên như code gốc...
     void SwapHoveredItemWithHotbar(int hotbarIndex)
     {
-        if (hoveredSlot != null && System.Array.IndexOf(inventorySlots, hoveredSlot) != -1)
-        {
-            if (hotbarSlots[hotbarIndex] == null || hotbarSlots[hotbarIndex].gameObject == null) return;
+        if (hoveredSlot == null || System.Array.IndexOf(inventorySlots, hoveredSlot) == -1) return;
+        if (hotbarSlots[hotbarIndex] == null || hotbarSlots[hotbarIndex].gameObject == null) return;
 
-            InventoryItem hoveredItem = hoveredSlot.currentItem;
-            int hoveredQuantity = hoveredSlot.quantity;
+        InventoryItem hoveredItem = hoveredSlot.currentItem;
+        int hoveredQuantity = hoveredSlot.quantity;
 
-            InventoryItem hotbarItem = hotbarSlots[hotbarIndex].currentItem;
-            int hotbarQuantity = hotbarSlots[hotbarIndex].quantity;
+        InventoryItem hotbarItem = hotbarSlots[hotbarIndex].currentItem;
+        int hotbarQuantity = hotbarSlots[hotbarIndex].quantity;
 
-            if (hotbarItem != null)
-                hoveredSlot.AddItem(hotbarItem, hotbarQuantity);
-            else
-                hoveredSlot.ClearSlot();
+        if (hotbarItem != null)
+            hoveredSlot.AddItem(hotbarItem, hotbarQuantity);
+        else
+            hoveredSlot.ClearSlot();
 
-            if (hoveredItem != null)
-                hotbarSlots[hotbarIndex].AddItem(hoveredItem, hoveredQuantity);
-            else
-                hotbarSlots[hotbarIndex].ClearSlot();
+        if (hoveredItem != null)
+            hotbarSlots[hotbarIndex].AddItem(hoveredItem, hoveredQuantity);
+        else
+            hotbarSlots[hotbarIndex].ClearSlot();
 
-            AutoSave(); // Lưu tự động
-        }
+        AutoSave();
     }
 
     public bool AddItemToHotbar(InventoryItem item, int amount = 1)
     {
+        if (item == null)
+        {
+            Debug.LogError("AddItemToHotbar called with null item!");
+            return false;
+        }
+
+        if (hotbarSlots == null || hotbarSlots.Length == 0)
+        {
+            Debug.LogError("Hotbar slots not initialized! Attempting to refresh.");
+            RefreshSlotReferences();
+            if (hotbarSlots.Length == 0) return false;
+        }
+
         foreach (var slot in hotbarSlots)
         {
             if (slot == null || slot.gameObject == null) continue;
@@ -391,7 +475,8 @@ public class InventoryManager : MonoBehaviour
             if (slot.currentItem == item)
             {
                 slot.AddItem(item, amount);
-                AutoSave(); // Lưu tự động
+                AutoSave();
+                Debug.Log($"Added {amount} {item.itemName} to existing hotbar slot.");
                 return true;
             }
         }
@@ -402,19 +487,35 @@ public class InventoryManager : MonoBehaviour
 
             if (slot.currentItem == null)
             {
-                Debug.Log("Đã add vào hotbar: " + item.itemName);
                 slot.AddItem(item, amount);
-                AutoSave(); // Lưu tự động
+                AutoSave();
+                Debug.Log($"Added {amount} {item.itemName} to empty hotbar slot.");
                 return true;
             }
         }
-        Debug.Log("Hotbar full!");
+
+        Debug.Log($"Hotbar full! Cannot add {item.itemName}.");
         return false;
     }
 
     public void AddItemToInventory(InventoryItem item, int amount = 1)
     {
-        Debug.Log($"Attempting to add {item.itemName} to inventory. Inventory slots length: {inventorySlots.Length}");
+        if (item == null)
+        {
+            Debug.LogError("AddItemToInventory called with null item!");
+            return;
+        }
+
+        if (inventorySlots == null || inventorySlots.Length == 0)
+        {
+            Debug.LogError("Inventory slots not initialized! Attempting to refresh.");
+            RefreshSlotReferences();
+            if (inventorySlots.Length == 0)
+            {
+                Debug.LogError("No inventory slots available to add item!");
+                return;
+            }
+        }
 
         foreach (var slot in inventorySlots)
         {
@@ -422,9 +523,9 @@ public class InventoryManager : MonoBehaviour
 
             if (slot.currentItem == item)
             {
-                Debug.Log($"Stacking {item.itemName} in existing slot.");
                 slot.AddItem(item, amount);
-                AutoSave(); // Lưu tự động
+                AutoSave();
+                Debug.Log($"Stacked {amount} {item.itemName} in existing inventory slot.");
                 return;
             }
         }
@@ -435,18 +536,20 @@ public class InventoryManager : MonoBehaviour
 
             if (slot.currentItem == null)
             {
-                Debug.Log($"Adding {item.itemName} to empty inventory slot.");
                 slot.AddItem(item, amount);
-                AutoSave(); // Lưu tự động
+                AutoSave();
+                Debug.Log($"Added {amount} {item.itemName} to empty inventory slot.");
                 return;
             }
         }
 
-        Debug.Log("Inventory full! No space for " + item.itemName);
+        Debug.Log($"Inventory full! Cannot add {item.itemName}.");
     }
 
     public void RemoveItemFromInventory(InventoryItem item, int amount = 1)
     {
+        if (item == null) return;
+
         foreach (var slot in inventorySlots)
         {
             if (slot == null || slot.gameObject == null) continue;
@@ -459,7 +562,7 @@ public class InventoryManager : MonoBehaviour
                 else
                     slot.quantityText.text = slot.quantity.ToString();
 
-                AutoSave(); // Lưu tự động
+                AutoSave();
                 return;
             }
         }
@@ -467,6 +570,8 @@ public class InventoryManager : MonoBehaviour
 
     public void RemoveItemFromHotbar(InventoryItem item)
     {
+        if (item == null) return;
+
         foreach (var slot in hotbarSlots)
         {
             if (slot == null || slot.gameObject == null) continue;
@@ -474,7 +579,7 @@ public class InventoryManager : MonoBehaviour
             if (slot.currentItem == item)
             {
                 slot.ClearSlot();
-                AutoSave(); // Lưu tự động
+                AutoSave();
                 return;
             }
         }
@@ -484,8 +589,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (index >= hotbarSlots.Length) return;
         var slot = hotbarSlots[index];
-        if (slot == null || slot.gameObject == null) return;
-        if (slot.currentItem == null) return;
+        if (slot == null || slot.gameObject == null || slot.currentItem == null) return;
 
         var item = slot.currentItem;
         PlayerControl player = FindObjectOfType<PlayerControl>();
@@ -508,7 +612,7 @@ public class InventoryManager : MonoBehaviour
                 break;
 
             default:
-                Debug.Log("Item không sử dụng được.");
+                Debug.Log($"Item {item.itemName} cannot be used.");
                 break;
         }
 
@@ -517,6 +621,6 @@ public class InventoryManager : MonoBehaviour
         else
             slot.quantityText.text = slot.quantity.ToString();
 
-        AutoSave(); // Lưu tự động
+        AutoSave();
     }
 }
