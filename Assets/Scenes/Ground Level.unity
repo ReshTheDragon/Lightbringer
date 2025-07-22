@@ -365,6 +365,7 @@ MonoBehaviour:
   triggerRadius: 5
   rotationSpeed: 5
   dragonAnimator: {fileID: 1546648812}
+  audioManager: {fileID: 1204370216}
 --- !u!1 &53175895
 GameObject:
   m_ObjectHideFlags: 0
@@ -2705,7 +2706,7 @@ Transform:
   m_GameObject: {fileID: 316252492}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -52.76, y: -56.35, z: -10}
+  m_LocalPosition: {x: 121, y: 5.8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -202026,7 +202027,7 @@ Transform:
   m_GameObject: {fileID: 997244579}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -52.76, y: -56.35, z: 0}
+  m_LocalPosition: {x: 121, y: 5.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -202205,7 +202206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1019838720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228120,6 +228121,7 @@ MonoBehaviour:
   attackCooldown: 1
   healthBarPrefab: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
   linkedPortal: {fileID: 1635667114}
+  audioManager: {fileID: 1204370216}
 --- !u!95 &1546648812
 Animator:
   serializedVersion: 7
@@ -280968,7 +280970,7 @@ Transform:
   m_GameObject: {fileID: 1792619450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -52.76, y: -56.35, z: -10}
+  m_LocalPosition: {x: 121, y: 5.8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
