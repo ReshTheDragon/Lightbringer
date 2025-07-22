@@ -54805,7 +54805,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6528410f8cd8f6944a12f0d4666ffe4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  meleeAttackClip: {fileID: 8300000, guid: 669c59a400b963849a723658167caac7, type: 3}
+  deathClip: {fileID: 8300000, guid: 41dacdf4ac4718f40815b63a89d8c632, type: 3}
+  player: {fileID: 624220548}
   hpBar: {fileID: 1430965020}
   maxHp: 100
   moveSpeed: 10
@@ -54816,7 +54818,7 @@ MonoBehaviour:
   rangedAttackDamage: 15
   rangedAttackPrefab: {fileID: 2209176688347403465, guid: 4042a9fe83ae0584aaea2d08da941031, type: 3}
   spellCastTime: 1.5
-  summonEnemyPrefab: {fileID: 4813797213235426364, guid: 6e4faf7d04f15ab4c8b5c75abbf1cd58, type: 3}
+  summonEnemyPrefab: {fileID: 3941771935938117399, guid: 9e9990259e20f0d4aafd448380324899, type: 3}
   summonCount: 10
   summonRadius: 10
   summonDelay: 1
