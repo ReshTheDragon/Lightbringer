@@ -25,10 +25,15 @@ public class EndingSceneController : MonoBehaviour
     public Button newGameButton;
 
     public Animator lightOrbAnimator;
+    private Animator playerAnimator; 
 
     private bool isWin = true;
     private bool isMovingToPodium = true;
     private float moveSpeed = 5f;
+
+    public AudioClip winSound;
+    public AudioClip loseSound;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -46,22 +51,40 @@ public class EndingSceneController : MonoBehaviour
         openChestButton.onClick.AddListener(OpenChest);
         cancelButton.onClick.AddListener(CancelOpenChest);
 
-        isWin = PlayerPrefs.GetInt("IsWin", 0) == 1 ;
+        isWin = PlayerPrefs.GetInt("IsWin", 0) == 1;
+        audioSource = GetComponent<AudioSource>();
+
+        if (player != null)
+        {
+            playerAnimator = player.GetComponent<Animator>();
+        }
     }
 
     void Update()
     {
         if (isMovingToPodium)
         {
+            Vector2 oldPos = player.transform.position;
             player.transform.position = Vector2.MoveTowards(
                 player.transform.position,
                 podiumPosition.position,
                 moveSpeed * Time.deltaTime
             );
 
+            if (playerAnimator != null)
+            {
+                bool isWalking = Vector2.Distance(player.transform.position, podiumPosition.position) >= 0.1f;
+                playerAnimator.SetBool("isWalking", isWalking);
+            }
+
             if (Vector2.Distance(player.transform.position, podiumPosition.position) < 0.1f)
             {
                 isMovingToPodium = false;
+                if (playerAnimator != null)
+                {
+                    playerAnimator.SetBool("isWalking", false); 
+                }
+
                 if (isWin)
                 {
                     winDialog.SetActive(true);
@@ -69,6 +92,7 @@ public class EndingSceneController : MonoBehaviour
                 else
                 {
                     loseDialog.SetActive(true);
+                    audioSource.PlayOneShot(loseSound, 0.5f);
                 }
             }
         }
@@ -117,7 +141,7 @@ public class EndingSceneController : MonoBehaviour
 
     private IEnumerator WaitForLightCoreDialogDelay()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         StartCoroutine(WaitForLightCoreDialog());
     }
 
@@ -128,6 +152,7 @@ public class EndingSceneController : MonoBehaviour
 
         if (firefliesEffect != null)
         {
+            audioSource.PlayOneShot(winSound, 0.5f);
             firefliesEffect.SetActive(true);
         }
 
@@ -159,7 +184,7 @@ public class EndingSceneController : MonoBehaviour
 
     void RetryGame()
     {
-        string lastLevel = PlayerPrefs.GetString("LastLevel", "Main Menu"); 
+        string lastLevel = PlayerPrefs.GetString("LastLevel", "Main Menu");
         Debug.Log("Retrying level: " + lastLevel);
         SceneManager.LoadScene(lastLevel);
     }
