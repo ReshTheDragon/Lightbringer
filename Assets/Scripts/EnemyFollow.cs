@@ -177,7 +177,7 @@ public class EnemyFollow : MonoBehaviour
 
         if (healthBarInstance != null)
             Destroy(healthBarInstance);
-
+        Debug.LogWarning("🐉 Dragon Boss đã bị đánh bại!");
         Destroy(gameObject, 1f); // Cho phép 1s để animation Die chạy nếu có
     }
 }

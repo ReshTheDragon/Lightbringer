@@ -57,7 +57,7 @@ public class PlayerControl : MonoBehaviour
 
         hudController.UpdateHealth(currentHealth / maxHealth);
 
-        audioManager.playBackGroundClip();
+        //audioManager.playBackGroundClip();
     }
 
     void Update()

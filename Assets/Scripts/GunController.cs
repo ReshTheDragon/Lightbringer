@@ -63,13 +63,13 @@ public class GunController : MonoBehaviour
         if (playerInRange)
         {
             // Player vào vùng trigger - bắt đầu animation tấn công
-            Debug.Log("Player entered attack range");
+            //Debug.Log("Player entered attack range");
             dragonAnimator.SetBool("IsAttack", true);
         }
         else
         {
             // Player ra khỏi vùng trigger - dừng animation tấn công
-            Debug.Log("Player left attack range");
+            //Debug.Log("Player left attack range");
             dragonAnimator.SetBool("IsAttack", false);
         }
     }

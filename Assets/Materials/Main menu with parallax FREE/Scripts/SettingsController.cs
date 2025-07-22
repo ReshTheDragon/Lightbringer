@@ -60,7 +60,7 @@ public class SettingsController : MonoBehaviour
             {
                 string json = File.ReadAllText(settingsPath);
                 gameSettings = JsonUtility.FromJson<Settings>(json);
-                Debug.Log("Settings loaded successfully!");
+                //Debug.Log("Settings loaded successfully!");
             }
             catch (System.Exception e)
             {

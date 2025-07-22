@@ -27,7 +27,7 @@ public class ChestInteraction : MonoBehaviour
     {
         spriteRenderer.sprite = openedChestSprite;
         isOpened = true;
-        Debug.Log("Chest opened!");
+        //Debug.Log("Chest opened!");
         if (pressEText != null)
         {
             pressEText.SetActive(false);

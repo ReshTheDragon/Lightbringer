@@ -26,22 +26,22 @@ public class ItemPickup : MonoBehaviour
         {
             if (item == null)
             {
-                Debug.LogError($"Cannot pick up item on {gameObject.name}: No item assigned!");
+                //Debug.LogError($"Cannot pick up item on {gameObject.name}: No item assigned!");
                 return;
             }
 
-            Debug.Log($"Attempting to pick up item: {item.itemName}, Quantity: {quantity}");
-            Debug.Log($"Inventory slots: {InventoryManager.Instance.inventorySlots.Length}, Hotbar slots: {InventoryManager.Instance.hotbarSlots.Length}");
+            //Debug.Log($"Attempting to pick up item: {item.itemName}, Quantity: {quantity}");
+            //Debug.Log($"Inventory slots: {InventoryManager.Instance.inventorySlots.Length}, Hotbar slots: {InventoryManager.Instance.hotbarSlots.Length}");
 
             if (InventoryManager.Instance.AddItemToHotbar(item, quantity))
             {
-                Debug.Log($"Picked up {quantity} {item.itemName}(s) to hotbar!");
+                //Debug.Log($"Picked up {quantity} {item.itemName}(s) to hotbar!");
                 Destroy(gameObject);
             }
             else
             {
                 InventoryManager.Instance.AddItemToInventory(item, quantity);
-                Debug.Log($"Picked up {quantity} {item.itemName}(s) to inventory!");
+                //Debug.Log($"Picked up {quantity} {item.itemName}(s) to inventory!");
                 Destroy(gameObject);
             }
         }

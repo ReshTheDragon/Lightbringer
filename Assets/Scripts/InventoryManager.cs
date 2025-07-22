@@ -43,12 +43,12 @@ public class InventoryManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             savePath = Path.Combine(Application.persistentDataPath, "inventory.json");
-            Debug.Log($"InventoryManager initialized at {Time.time}. Save path: {savePath}");
+            //Debug.Log($"InventoryManager initialized at {Time.time}. Save path: {savePath}");
         }
         else
         {
             Destroy(gameObject);
-            Debug.LogWarning($"Duplicate InventoryManager detected, destroying at {Time.time}.");
+            //Debug.LogWarning($"Duplicate InventoryManager detected, destroying at {Time.time}.");
         }
     }
 
@@ -56,12 +56,12 @@ public class InventoryManager : MonoBehaviour
     {
         if (inventorySlots == null || inventorySlots.Length == 0)
         {
-            Debug.LogWarning($"Inventory slots not assigned at {Time.time}. Attempting to find them.");
+            //Debug.LogWarning($"Inventory slots not assigned at {Time.time}. Attempting to find them.");
             RefreshSlotReferences();
         }
         if (hotbarSlots == null || hotbarSlots.Length == 0)
         {
-            Debug.LogWarning($"Hotbar slots not assigned at {Time.time}. Attempting to find them.");
+            //Debug.LogWarning($"Hotbar slots not assigned at {Time.time}. Attempting to find them.");
             RefreshSlotReferences();
         }
 
@@ -76,7 +76,7 @@ public class InventoryManager : MonoBehaviour
         if (inventoryUI != null)
         {
             inventoryUI.SetActive(true);
-            Debug.Log($"Inventory UI activated on start at {Time.time}.");
+            //Debug.Log($"Inventory UI activated on start at {Time.time}.");
         }
     }
 
@@ -95,12 +95,12 @@ public class InventoryManager : MonoBehaviour
                 string itemName = hotbarSlots[i].currentItem != null ? hotbarSlots[i].currentItem.itemName : "";
                 int quantity = hotbarSlots[i].currentItem != null ? hotbarSlots[i].quantity : 0;
                 data.hotbarSlots.Add(new SlotData(itemName, quantity));
-                Debug.Log($"Saving hotbar slot {i}: {itemName}, qty: {quantity} at {Time.time}.");
+                //Debug.Log($"Saving hotbar slot {i}: {itemName}, qty: {quantity} at {Time.time}.");
             }
             else
             {
                 data.hotbarSlots.Add(new SlotData("", 0));
-                Debug.Log($"Saving hotbar slot {i}: Null slot at {Time.time}.");
+                //Debug.Log($"Saving hotbar slot {i}: Null slot at {Time.time}.");
             }
         }
 
@@ -112,39 +112,39 @@ public class InventoryManager : MonoBehaviour
                 string itemName = inventorySlots[i].currentItem != null ? inventorySlots[i].currentItem.itemName : "";
                 int quantity = inventorySlots[i].currentItem != null ? inventorySlots[i].quantity : 0;
                 data.inventorySlots.Add(new SlotData(itemName, quantity));
-                Debug.Log($"Saving inventory slot {i}: {itemName}, qty: {quantity} at {Time.time}.");
+                //Debug.Log($"Saving inventory slot {i}: {itemName}, qty: {quantity} at {Time.time}.");
             }
             else
             {
                 data.inventorySlots.Add(new SlotData("", 0));
-                Debug.Log($"Saving inventory slot {i}: Null slot at {Time.time}.");
+                //Debug.Log($"Saving inventory slot {i}: Null slot at {Time.time}.");
             }
         }
 
         // Kiểm tra và loại bỏ trùng lặp nếu có
         if (data.inventorySlots.Count > inventorySlots.Length)
         {
-            Debug.LogWarning($"Inventory slots count ({data.inventorySlots.Count}) exceeds assigned slots ({inventorySlots.Length}) at {Time.time}. Truncating to {inventorySlots.Length} slots.");
+            //Debug.LogWarning($"Inventory slots count ({data.inventorySlots.Count}) exceeds assigned slots ({inventorySlots.Length}) at {Time.time}. Truncating to {inventorySlots.Length} slots.");
             data.inventorySlots.RemoveRange(inventorySlots.Length, data.inventorySlots.Count - inventorySlots.Length);
         }
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);
-        Debug.Log($"Inventory saved to JSON: {savePath}\nJSON content: {json} at {Time.time}.");
+        //Debug.Log($"Inventory saved to JSON: {savePath}\nJSON content: {json} at {Time.time}.");
     }
 
     public void LoadInventoryFromJSON()
     {
         if (File.Exists(savePath))
         {
-            Debug.Log($"Loading inventory from: {savePath} at {Time.time}.");
+            //Debug.Log($"Loading inventory from: {savePath} at {Time.time}.");
             string json = File.ReadAllText(savePath);
-            Debug.Log($"JSON content: {json} at {Time.time}.");
+            //Debug.Log($"JSON content: {json} at {Time.time}.");
 
             InventoryData data = JsonUtility.FromJson<InventoryData>(json);
             if (data == null)
             {
-                Debug.LogError($"Failed to deserialize JSON data at {Time.time}!");
+                //Debug.LogError($"Failed to deserialize JSON data at {Time.time}!");
                 return;
             }
 
@@ -152,7 +152,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"No save file found at {Time.time}. Starting with empty inventory.");
+            //Debug.Log($"No save file found at {Time.time}. Starting with empty inventory.");
         }
     }
 
@@ -161,8 +161,8 @@ public class InventoryManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         RefreshSlotReferences();
-        Debug.Log($"Hotbar slots count in scene: {hotbarSlots.Length}, Inventory slots count in scene: {inventorySlots.Length} at {Time.time}.");
-        Debug.Log($"Data hotbar slots: {data.hotbarSlots.Count}, Data inventory slots: {data.inventorySlots.Count} at {Time.time}.");
+        //Debug.Log($"Hotbar slots count in scene: {hotbarSlots.Length}, Inventory slots count in scene: {inventorySlots.Length} at {Time.time}.");
+        //Debug.Log($"Data hotbar slots: {data.hotbarSlots.Count}, Data inventory slots: {data.inventorySlots.Count} at {Time.time}.");
 
         ClearAllSlots();
 
@@ -172,7 +172,7 @@ public class InventoryManager : MonoBehaviour
         {
             if (hotbarSlots[i] == null)
             {
-                Debug.LogWarning($"Hotbar slot {i} is null at {Time.time}, skipping");
+                //Debug.LogWarning($"Hotbar slot {i} is null at {Time.time}, skipping");
                 continue;
             }
 
@@ -181,12 +181,12 @@ public class InventoryManager : MonoBehaviour
                 InventoryItem item = FindItemByName(data.hotbarSlots[i].itemName);
                 if (item != null)
                 {
-                    Debug.Log($"Loading hotbar slot {i}: {item.itemName} x{data.hotbarSlots[i].quantity} at {Time.time}.");
+                    //Debug.Log($"Loading hotbar slot {i}: {item.itemName} x{data.hotbarSlots[i].quantity} at {Time.time}.");
                     hotbarSlots[i].AddItem(item, data.hotbarSlots[i].quantity);
                 }
                 else
                 {
-                    Debug.LogWarning($"Item not found: {data.hotbarSlots[i].itemName} at {Time.time}.");
+                    //Debug.LogWarning($"Item not found: {data.hotbarSlots[i].itemName} at {Time.time}.");
                 }
             }
         }
@@ -197,7 +197,7 @@ public class InventoryManager : MonoBehaviour
         {
             if (inventorySlots[i] == null)
             {
-                Debug.LogWarning($"Inventory slot {i} is null at {Time.time}, skipping");
+                //Debug.LogWarning($"Inventory slot {i} is null at {Time.time}, skipping");
                 continue;
             }
 
@@ -206,21 +206,21 @@ public class InventoryManager : MonoBehaviour
                 InventoryItem item = FindItemByName(data.inventorySlots[i].itemName);
                 if (item != null)
                 {
-                    Debug.Log($"Loading inventory slot {i}: {item.itemName} x{data.inventorySlots[i].quantity} at {Time.time}.");
+                    //Debug.Log($"Loading inventory slot {i}: {item.itemName} x{data.inventorySlots[i].quantity} at {Time.time}.");
                     inventorySlots[i].AddItem(item, data.inventorySlots[i].quantity);
                 }
                 else
                 {
-                    Debug.LogWarning($"Item not found: {data.inventorySlots[i].itemName} at {Time.time}.");
+                    //Debug.LogWarning($"Item not found: {data.inventorySlots[i].itemName} at {Time.time}.");
                 }
             }
         }
 
-        Debug.Log($"Inventory loaded from JSON at {Time.time}.");
+        //Debug.Log($"Inventory loaded from JSON at {Time.time}.");
         if (inventoryUI != null)
         {
             inventoryUI.SetActive(true);
-            Debug.Log($"Inventory UI activated after load at {Time.time}.");
+            //Debug.Log($"Inventory UI activated after load at {Time.time}.");
         }
     }
 
@@ -289,7 +289,7 @@ public class InventoryManager : MonoBehaviour
             yield break;
         }
 
-        Debug.Log($"Found InventoryPanel: {inventoryUI.name}, Active: {inventoryUI.activeSelf} at {Time.time}.");
+        //Debug.Log($"Found InventoryPanel: {inventoryUI.name}, Active: {inventoryUI.activeSelf} at {Time.time}.");
 
         RefreshSlotReferences();
         if (inventorySlots.Length == 0 || hotbarSlots.Length == 0)
@@ -321,11 +321,11 @@ public class InventoryManager : MonoBehaviour
                 }
             }
             inventorySlots = validInventorySlots.ToArray();
-            Debug.Log($"Found InventoryPanel: {inventoryPanel.name}, Valid inventory slots: {inventorySlots.Length} at {Time.time}.");
-            for (int i = 0; i < inventorySlots.Length; i++)
-            {
-                Debug.Log($"Inventory slot {i}: {(inventorySlots[i] != null ? inventorySlots[i].gameObject.name : "null")} at {Time.time}.");
-            }
+            //Debug.Log($"Found InventoryPanel: {inventoryPanel.name}, Valid inventory slots: {inventorySlots.Length} at {Time.time}.");
+            //for (int i = 0; i < inventorySlots.Length; i++)
+            //{
+            //    Debug.Log($"Inventory slot {i}: {(inventorySlots[i] != null ? inventorySlots[i].gameObject.name : "null")} at {Time.time}.");
+            //}
         }
         else
         {
@@ -337,11 +337,11 @@ public class InventoryManager : MonoBehaviour
         if (hotbarPanel != null)
         {
             hotbarSlots = hotbarPanel.GetComponentsInChildren<InventorySlot>(true);
-            Debug.Log($"Found HotbarPanel: {hotbarPanel.name}, Slots found: {hotbarSlots.Length} at {Time.time}.");
-            for (int i = 0; i < hotbarSlots.Length; i++)
-            {
-                Debug.Log($"Hotbar slot {i}: {(hotbarSlots[i] != null ? hotbarSlots[i].gameObject.name : "null")} at {Time.time}.");
-            }
+            //Debug.Log($"Found HotbarPanel: {hotbarPanel.name}, Slots found: {hotbarSlots.Length} at {Time.time}.");
+            //for (int i = 0; i < hotbarSlots.Length; i++)
+            //{
+            //    Debug.Log($"Hotbar slot {i}: {(hotbarSlots[i] != null ? hotbarSlots[i].gameObject.name : "null")} at {Time.time}.");
+            //}
         }
         else
         {
@@ -380,7 +380,7 @@ public class InventoryManager : MonoBehaviour
             inventoryUI = GameObject.Find("InventoryPanel") ?? GameObject.Find("Panel/InventoryPanel") ?? GameObject.FindWithTag("InventoryUI");
             if (inventoryUI == null)
             {
-                Debug.LogError($"InventoryUI not found at {Time.time}!");
+                //Debug.LogError($"InventoryUI not found at {Time.time}!");
                 return;
             }
         }
@@ -389,7 +389,7 @@ public class InventoryManager : MonoBehaviour
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
             isInventoryOpen = inventoryUI.activeSelf;
-            Debug.Log($"Inventory toggled: {isInventoryOpen} at {Time.time}.");
+            //Debug.Log($"Inventory toggled: {isInventoryOpen} at {Time.time}.");
         }
 
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -438,7 +438,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         InventoryItem[] allItems = Resources.LoadAll<InventoryItem>("Items");
-        Debug.Log($"Searching for item: {itemName} at {Time.time}. Found {allItems.Length} items in Resources/Items");
+        //Debug.Log($"Searching for item: {itemName} at {Time.time}. Found {allItems.Length} items in Resources/Items");
 
         foreach (InventoryItem item in allItems)
         {
@@ -447,10 +447,10 @@ public class InventoryManager : MonoBehaviour
                 Debug.LogWarning("Found null item in Resources/Items at {Time.time}!");
                 continue;
             }
-            Debug.Log($"Checking item: {item.itemName} (Asset: {item.name}) vs {itemName} at {Time.time}.");
+            //Debug.Log($"Checking item: {item.itemName} (Asset: {item.name}) vs {itemName} at {Time.time}.");
             if (item.itemName.Equals(itemName, System.StringComparison.OrdinalIgnoreCase))
             {
-                Debug.Log($"Found matching item: {item.itemName} (Asset: {item.name}) at {Time.time}.");
+                //Debug.Log($"Found matching item: {item.itemName} (Asset: {item.name}) at {Time.time}.");
                 return item;
             }
         }
@@ -519,12 +519,12 @@ public class InventoryManager : MonoBehaviour
             {
                 slot.AddItem(item, amount);
                 AutoSave();
-                Debug.Log($"Added {amount} {item.itemName} to empty hotbar slot at {Time.time}.");
+                //Debug.Log($"Added {amount} {item.itemName} to empty hotbar slot at {Time.time}.");
                 return true;
             }
         }
 
-        Debug.Log($"Hotbar full at {Time.time}! Cannot add {item.itemName}.");
+        //Debug.Log($"Hotbar full at {Time.time}! Cannot add {item.itemName}.");
         return false;
     }
 
@@ -568,7 +568,7 @@ public class InventoryManager : MonoBehaviour
             {
                 slot.AddItem(item, amount);
                 AutoSave();
-                Debug.Log($"Added {amount} {item.itemName} to empty inventory slot at {Time.time}.");
+                //Debug.Log($"Added {amount} {item.itemName} to empty inventory slot at {Time.time}.");
                 return;
             }
         }

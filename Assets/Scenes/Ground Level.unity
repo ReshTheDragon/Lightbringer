@@ -227603,7 +227603,7 @@ GameObject:
   - component: {fileID: 1546648812}
   m_Layer: 6
   m_Name: DragonEnemy
-  m_TagString: Enemy
+  m_TagString: DragonBoss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -227761,6 +227761,7 @@ MonoBehaviour:
   attackDamage: 10
   attackCooldown: 1
   healthBarPrefab: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
+  linkedPortal: {fileID: 1635667114}
 --- !u!95 &1546648812
 Animator:
   serializedVersion: 7
@@ -228305,6 +228306,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: DarkScene
+  requireBossDefeat: 1
+  dragonBoss: {fileID: 1546648811}
+  lockedColor: {r: 1, g: 0, b: 0, a: 1}
+  unlockedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!58 &1635667115
 CircleCollider2D:
   m_ObjectHideFlags: 0
