@@ -48521,19 +48521,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 0}
   inventorySlots:
-  - {fileID: 1565044483}
-  - {fileID: 1105277586}
-  - {fileID: 465938576}
-  - {fileID: 988505571}
-  - {fileID: 1967867478}
-  - {fileID: 1394319837}
-  - {fileID: 1604948633}
-  - {fileID: 322840316}
-  - {fileID: 142480805}
+  - {fileID: 1909139664}
+  - {fileID: 1175782710}
+  - {fileID: 1704515887}
+  - {fileID: 1649441661}
+  - {fileID: 2117094697}
+  - {fileID: 81284184}
+  - {fileID: 818390336}
+  - {fileID: 4105798}
+  - {fileID: 1440773082}
   hotbarSlots:
-  - {fileID: 1970145986}
-  - {fileID: 1424617879}
-  - {fileID: 2036209062}
+  - {fileID: 1239896797}
+  - {fileID: 1226506238}
+  - {fileID: 1311949145}
   hoveredSlot: {fileID: 0}
 --- !u!4 &321565703
 Transform:
@@ -49134,10 +49134,10 @@ MonoBehaviour:
   - 15
   - 20
   skillImages:
-  - {fileID: 61999351}
-  - {fileID: 454728754}
-  - {fileID: 1050908676}
-  - {fileID: 1183338111}
+  - {fileID: 1487485776}
+  - {fileID: 1888280779}
+  - {fileID: 1639688200}
+  - {fileID: 924021649}
   detectRadius: 10
 --- !u!95 &624220545
 Animator:
