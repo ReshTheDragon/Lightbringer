@@ -54816,7 +54816,7 @@ MonoBehaviour:
   rangedAttackDamage: 15
   rangedAttackPrefab: {fileID: 2209176688347403465, guid: 4042a9fe83ae0584aaea2d08da941031, type: 3}
   spellCastTime: 1.5
-  summonEnemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
+  summonEnemyPrefab: {fileID: 4813797213235426364, guid: 6e4faf7d04f15ab4c8b5c75abbf1cd58, type: 3}
   summonCount: 10
   summonRadius: 10
   summonDelay: 1
