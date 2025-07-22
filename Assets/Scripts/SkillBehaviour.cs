@@ -31,7 +31,7 @@ public class SkillBehaviour : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Enemy") || collision.CompareTag("DragonBoss"))
         {
             if (collision.GetComponent<EnemyFollow>() != null)
                 collision.GetComponent<EnemyFollow>().TakeHit(transform.position, 3f, damage);
