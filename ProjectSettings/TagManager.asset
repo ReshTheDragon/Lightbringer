@@ -13,6 +13,10 @@ TagManager:
   - InventoryUI
   - PlayerFire
   - Explosion
+  - DragonBoss
+  - Book1
+  - Book2
+  - Book3
   layers:
   - Default
   - TransparentFX

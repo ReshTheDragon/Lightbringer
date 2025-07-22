@@ -28,21 +28,21 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
         if (icon == null)
         {
             icon = GetComponentInChildren<Image>();
-            if (icon == null)
-                Debug.LogError($"Slot {gameObject.name} không tìm thấy Image con!");
+            //if (icon == null)
+                //Debug.LogError($"Slot {gameObject.name} không tìm thấy Image con!");
         }
         quantityText = GetComponentInChildren<TextMeshProUGUI>();
-        if (quantityText == null)
-            Debug.LogError($"Slot {gameObject.name} không tìm thấy Text con cho quantity!");
-        else
-            quantityText.enabled = false;
+        //if (quantityText == null)
+        //    Debug.LogError($"Slot {gameObject.name} không tìm thấy Text con cho quantity!");
+        //else
+        //    quantityText.enabled = false;
 
-        Debug.Log($"InventorySlot Awake: {gameObject.name}, Icon: {icon != null}, QuantityText: {quantityText != null}");
+        //Debug.Log($"InventorySlot Awake: {gameObject.name}, Icon: {icon != null}, QuantityText: {quantityText != null}");
     }
 
     public void AddItem(InventoryItem newItem, int amount = 1)
     {
-        Debug.Log($"AddItem called for {gameObject.name} with item {newItem.itemName}, amount {amount}");
+        //Debug.Log($"AddItem called for {gameObject.name} with item {newItem.itemName}, amount {amount}");
 
         if (currentItem != null && currentItem == newItem)
         {
@@ -50,19 +50,19 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
             int amountToAdd = Mathf.Min(availableSpace, amount);
             quantity += amountToAdd;
 
-            Debug.Log($"Stacking item. Added {amountToAdd}. New quantity: {quantity}");
+            //Debug.Log($"Stacking item. Added {amountToAdd}. New quantity: {quantity}");
 
-            if (amountToAdd < amount)
-                Debug.Log($"Slot {gameObject.name} đầy, còn dư {amount - amountToAdd} item.");
+            //if (amountToAdd < amount)
+            //    Debug.Log($"Slot {gameObject.name} đầy, còn dư {amount - amountToAdd} item.");
         }
         else
         {
             currentItem = newItem;
             quantity = Mathf.Min(amount, MaxStack);
-            Debug.Log($"Adding new item. Quantity: {quantity}");
+            //Debug.Log($"Adding new item. Quantity: {quantity}");
 
-            if (amount > MaxStack)
-                Debug.Log($"Slot {gameObject.name} đầy, còn dư {amount - MaxStack} item.");
+            //if (amount > MaxStack)
+            //    Debug.Log($"Slot {gameObject.name} đầy, còn dư {amount - MaxStack} item.");
         }
 
         if (icon != null)
@@ -70,7 +70,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
             icon.sprite = newItem.icon;
             icon.enabled = true;
             icon.color = new Color(1, 1, 1, 1);
-            Debug.Log($"Icon updated for {gameObject.name}");
+            //Debug.Log($"Icon updated for {gameObject.name}");
         }
         else
         {
@@ -82,7 +82,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
 
     public void ClearSlot()
     {
-        Debug.Log($"ClearSlot called for {gameObject.name}");
+        //Debug.Log($"ClearSlot called for {gameObject.name}");
         currentItem = null;
         quantity = 0;
 
@@ -113,7 +113,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
                 quantityText.text = "";
                 quantityText.enabled = false;
             }
-            Debug.Log($"Quantity text updated for {gameObject.name}: {quantityText.text}");
+            //Debug.Log($"Quantity text updated for {gameObject.name}: {quantityText.text}");
         }
     }
 

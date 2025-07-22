@@ -57,7 +57,7 @@ public class PlayerControl : MonoBehaviour
 
         hudController.UpdateHealth(currentHealth / maxHealth);
 
-        audioManager.playBackGroundClip();
+        //audioManager.playBackGroundClip();
     }
 
     void Update()
@@ -65,16 +65,6 @@ public class PlayerControl : MonoBehaviour
         if (InventoryManager.isInventoryOpen)
         {
             return; // Don't process any input if inventory is open
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (!isPauseMenuLoaded)
-            {
-                SceneManager.LoadScene("GamePauseMenu", LoadSceneMode.Additive);
-                Time.timeScale = 0f;
-                isPauseMenuLoaded = true;
-            }
         }
 
         float moveX = Input.GetAxisRaw("Horizontal");
@@ -320,7 +310,7 @@ public class PlayerControl : MonoBehaviour
 
         foreach (var col in enemies)
         {
-            if (col.CompareTag("Enemy"))
+            if (col.CompareTag("Enemy") || col.CompareTag("DragonBoss"))
             {
                 float dist = Vector2.Distance(transform.position, col.transform.position);
                 if (dist < minDist)
