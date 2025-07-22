@@ -49499,6 +49499,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8592445712150810553, guid: 49c99bae2a4ffc94ea562929824e3502, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -53319,6 +53323,10 @@ PrefabInstance:
     - target: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
       propertyPath: m_Name
       value: HealthBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 6384819149212031089, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6464058040167377923, guid: 71f1e68fae194904684a731be213a0c7, type: 3}
       propertyPath: m_Pivot.x
