@@ -185,8 +185,10 @@ public class BossController : MonoBehaviour
 
         
         animator.SetTrigger("IsDie");
+       
 
         
+
         StartCoroutine(DeathSequence());
     }
 
@@ -194,14 +196,10 @@ public class BossController : MonoBehaviour
     {
         Debug.Log("Boss is dying...");
 
-        
-        yield return new WaitForSeconds(2.5f);
-
-     
         KillAllMinions();
 
       
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
         PlayerPrefs.SetInt("IsWin", 1);
 
         Debug.Log("Loading ending scene...");
