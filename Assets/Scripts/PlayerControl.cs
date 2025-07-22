@@ -19,7 +19,6 @@ public class PlayerControl : MonoBehaviour
 
     private bool isPauseMenuLoaded = false;
 
-
     public float maxMana = 100f;
     private float currentMana;
 
@@ -33,8 +32,8 @@ public class PlayerControl : MonoBehaviour
     private float[] skillCooldownTimers = new float[4];
     private Vector2 lastMoveDirection = Vector2.right; // mặc định hướng phải
 
-
     [SerializeField] private AudioManager audioManager;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -164,7 +163,6 @@ public class PlayerControl : MonoBehaviour
             if (skillCooldownTimers[i] > 0)
                 skillCooldownTimers[i] -= Time.deltaTime;
         }
-
     }
 
     void UseHotbarItem(int index)
@@ -174,6 +172,12 @@ public class PlayerControl : MonoBehaviour
 
     void Attack()
     {
+        // Phát âm thanh đánh thường
+        if (audioManager != null)
+        {
+            audioManager.playSliceClip();
+        }
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
         foreach (Collider2D enemy in hitEnemies)
         {
@@ -195,8 +199,6 @@ public class PlayerControl : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
-
- 
 
     public void RestoreMana(float amount)
     {
@@ -277,6 +279,12 @@ public class PlayerControl : MonoBehaviour
             return;
         }
 
+        // Phát âm thanh cast skill
+        if (audioManager != null)
+        {
+            audioManager.playSkillClip();
+        }
+
         currentMana -= manaCost;
         hudController.UpdateMana(currentMana / maxMana);
 
@@ -286,7 +294,6 @@ public class PlayerControl : MonoBehaviour
         {
             dir = spriteRenderer.flipX ? Vector2.left : Vector2.right;
         }
-
 
         GameObject skill = Instantiate(skillPrefabs[index], skillSpawnPoint.position, Quaternion.identity);
         SkillBehaviour sb = skill.GetComponent<SkillBehaviour>();
@@ -298,7 +305,6 @@ public class PlayerControl : MonoBehaviour
 
         skillCooldownTimers[index] = skillCooldowns[index];
     }
-
 
     Vector2 FindEnemyDirection()
     {
@@ -325,5 +331,4 @@ public class PlayerControl : MonoBehaviour
             return (nearest.position - transform.position).normalized;
         return Vector2.zero;
     }
-
 }
