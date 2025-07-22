@@ -320,7 +320,7 @@ public class PlayerControl : MonoBehaviour
 
         foreach (var col in enemies)
         {
-            if (col.CompareTag("Enemy"))
+            if (col.CompareTag("Enemy") || col.CompareTag("DragonBoss"))
             {
                 float dist = Vector2.Distance(transform.position, col.transform.position);
                 if (dist < minDist)

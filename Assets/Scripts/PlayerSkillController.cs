@@ -47,7 +47,7 @@ public class PlayerSkillController : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            if (hit.CompareTag("Enemy"))
+            if (hit.CompareTag("Enemy") || hit.CompareTag("DragonBoss"))
             {
                 float dist = Vector2.Distance(transform.position, hit.transform.position);
                 if (dist < shortestDist)
