@@ -15,14 +15,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (InventoryManager.Instance != null)
-            InventoryManager.Instance.hoveredSlot = this;
+        InventoryManager.Instance.hoveredSlot = this;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (InventoryManager.Instance != null)
-            InventoryManager.Instance.hoveredSlot = null;
+        InventoryManager.Instance.hoveredSlot = null;
     }
 
     private void Awake()
@@ -42,21 +40,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
         Debug.Log($"InventorySlot Awake: {gameObject.name}, Icon: {icon != null}, QuantityText: {quantityText != null}");
     }
 
-    // Check if this slot is still valid (not destroyed)
-    private bool IsValid()
-    {
-        return this != null && gameObject != null && !ReferenceEquals(this, null);
-    }
-
     public void AddItem(InventoryItem newItem, int amount = 1)
     {
-        // Safety check to prevent MissingReferenceException
-        if (!IsValid())
-        {
-            Debug.LogError("Trying to access a destroyed InventorySlot");
-            return;
-        }
-
         Debug.Log($"AddItem called for {gameObject.name} with item {newItem.itemName}, amount {amount}");
 
         if (currentItem != null && currentItem == newItem)
@@ -97,12 +82,6 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
 
     public void ClearSlot()
     {
-        if (!IsValid())
-        {
-            Debug.LogError("Trying to access a destroyed InventorySlot");
-            return;
-        }
-
         Debug.Log($"ClearSlot called for {gameObject.name}");
         currentItem = null;
         quantity = 0;
@@ -122,11 +101,6 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
 
     public void UpdateQuantityText()
     {
-        if (!IsValid())
-        {
-            return;
-        }
-
         if (quantityText != null)
         {
             if (currentItem != null && quantity > 1)
@@ -145,17 +119,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, 
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!IsValid())
-        {
-            return;
-        }
-
         GameObject droppedObject = eventData.pointerDrag;
         DragAndDrop dragAndDrop = droppedObject.GetComponent<DragAndDrop>();
         if (dragAndDrop != null)
         {
             InventorySlot originalSlot = droppedObject.GetComponentInParent<InventorySlot>();
-            if (originalSlot != null && originalSlot != this && originalSlot.IsValid())
+            if (originalSlot != null && originalSlot != this)
             {
                 // Swap items
                 InventoryItem tempItem = currentItem;

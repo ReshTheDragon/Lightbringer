@@ -75,7 +75,7 @@ public class InventoryManager : MonoBehaviour
         // Lưu hotbar
         for (int i = 0; i < hotbarSlots.Length; i++)
         {
-            if (hotbarSlots[i] != null && hotbarSlots[i] != null && hotbarSlots[i].currentItem != null)
+            if (hotbarSlots[i].currentItem != null)
             {
                 data.hotbarSlots.Add(new SlotData(hotbarSlots[i].currentItem.itemName, hotbarSlots[i].quantity));
             }
@@ -88,7 +88,7 @@ public class InventoryManager : MonoBehaviour
         // Lưu inventory
         for (int i = 0; i < inventorySlots.Length; i++)
         {
-            if (inventorySlots[i] != null && inventorySlots[i] != null && inventorySlots[i].currentItem != null)
+            if (inventorySlots[i].currentItem != null)
             {
                 data.inventorySlots.Add(new SlotData(inventorySlots[i].currentItem.itemName, inventorySlots[i].quantity));
             }
@@ -127,33 +127,16 @@ public class InventoryManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        // Refresh slot references before loading
-        RefreshSlotReferences();
-
-        // Tải hotbar với null checking
+        // Tải hotbar
         for (int i = 0; i < data.hotbarSlots.Count && i < hotbarSlots.Length; i++)
         {
-            // Check if slot exists and is not destroyed
-            if (hotbarSlots[i] == null)
-            {
-                Debug.LogWarning($"Hotbar slot {i} is null, skipping");
-                continue;
-            }
-
             if (!string.IsNullOrEmpty(data.hotbarSlots[i].itemName))
             {
                 InventoryItem item = FindItemByName(data.hotbarSlots[i].itemName);
                 if (item != null)
                 {
                     Debug.Log($"Loading hotbar slot {i}: {item.itemName} x{data.hotbarSlots[i].quantity}");
-                    try
-                    {
-                        hotbarSlots[i].AddItem(item, data.hotbarSlots[i].quantity);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError($"Error adding item to hotbar slot {i}: {e.Message}");
-                    }
+                    hotbarSlots[i].AddItem(item, data.hotbarSlots[i].quantity);
                 }
                 else
                 {
@@ -162,30 +145,16 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        // Tải inventory với null checking
+        // Tải inventory
         for (int i = 0; i < data.inventorySlots.Count && i < inventorySlots.Length; i++)
         {
-            // Check if slot exists and is not destroyed
-            if (inventorySlots[i] == null)
-            {
-                Debug.LogWarning($"Inventory slot {i} is null, skipping");
-                continue;
-            }
-
             if (!string.IsNullOrEmpty(data.inventorySlots[i].itemName))
             {
                 InventoryItem item = FindItemByName(data.inventorySlots[i].itemName);
                 if (item != null)
                 {
                     Debug.Log($"Loading inventory slot {i}: {item.itemName} x{data.inventorySlots[i].quantity}");
-                    try
-                    {
-                        inventorySlots[i].AddItem(item, data.inventorySlots[i].quantity);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError($"Error adding item to inventory slot {i}: {e.Message}");
-                    }
+                    inventorySlots[i].AddItem(item, data.inventorySlots[i].quantity);
                 }
                 else
                 {
@@ -267,23 +236,21 @@ public class InventoryManager : MonoBehaviour
     private void RefreshSlotReferences()
     {
         // Nếu slots bị mất reference, tìm lại
-        if (inventorySlots == null || inventorySlots.Length == 0 || System.Array.Exists(inventorySlots, slot => slot == null))
+        if (inventorySlots == null || inventorySlots.Length == 0)
         {
             GameObject inventoryPanel = GameObject.Find("InventoryPanel");
             if (inventoryPanel != null)
             {
                 inventorySlots = inventoryPanel.GetComponentsInChildren<InventorySlot>();
-                Debug.Log($"Refreshed inventory slots: {inventorySlots.Length} found");
             }
         }
 
-        if (hotbarSlots == null || hotbarSlots.Length == 0 || System.Array.Exists(hotbarSlots, slot => slot == null))
+        if (hotbarSlots == null || hotbarSlots.Length == 0)
         {
             GameObject hotbarPanel = GameObject.Find("HotbarPanel");
             if (hotbarPanel != null)
             {
                 hotbarSlots = hotbarPanel.GetComponentsInChildren<InventorySlot>();
-                Debug.Log($"Refreshed hotbar slots: {hotbarSlots.Length} found");
             }
         }
     }
@@ -291,22 +258,16 @@ public class InventoryManager : MonoBehaviour
     // Các phương thức cũ giữ nguyên...
     public void ClearAllSlots()
     {
-        if (hotbarSlots != null)
+        foreach (var slot in hotbarSlots)
         {
-            foreach (var slot in hotbarSlots)
-            {
-                if (slot != null && slot != null && slot.gameObject != null)
-                    slot.ClearSlot();
-            }
+            if (slot != null && slot.gameObject != null)
+                slot.ClearSlot();
         }
 
-        if (inventorySlots != null)
+        foreach (var slot in inventorySlots)
         {
-            foreach (var slot in inventorySlots)
-            {
-                if (slot != null && slot != null && slot.gameObject != null)
-                    slot.ClearSlot();
-            }
+            if (slot != null && slot.gameObject != null)
+                slot.ClearSlot();
         }
     }
 
@@ -399,7 +360,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (hoveredSlot != null && System.Array.IndexOf(inventorySlots, hoveredSlot) != -1)
         {
-            if (hotbarSlots[hotbarIndex] == null || hotbarSlots[hotbarIndex] == null || hotbarSlots[hotbarIndex].gameObject == null) return;
+            if (hotbarSlots[hotbarIndex] == null || hotbarSlots[hotbarIndex].gameObject == null) return;
 
             InventoryItem hoveredItem = hoveredSlot.currentItem;
             int hoveredQuantity = hoveredSlot.quantity;
@@ -425,7 +386,7 @@ public class InventoryManager : MonoBehaviour
     {
         foreach (var slot in hotbarSlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == item)
             {
@@ -437,7 +398,7 @@ public class InventoryManager : MonoBehaviour
 
         foreach (var slot in hotbarSlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == null)
             {
@@ -457,7 +418,7 @@ public class InventoryManager : MonoBehaviour
 
         foreach (var slot in inventorySlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == item)
             {
@@ -470,7 +431,7 @@ public class InventoryManager : MonoBehaviour
 
         foreach (var slot in inventorySlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == null)
             {
@@ -488,7 +449,7 @@ public class InventoryManager : MonoBehaviour
     {
         foreach (var slot in inventorySlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == item)
             {
@@ -508,7 +469,7 @@ public class InventoryManager : MonoBehaviour
     {
         foreach (var slot in hotbarSlots)
         {
-            if (slot == null || slot == null || slot.gameObject == null) continue;
+            if (slot == null || slot.gameObject == null) continue;
 
             if (slot.currentItem == item)
             {
@@ -523,7 +484,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (index >= hotbarSlots.Length) return;
         var slot = hotbarSlots[index];
-        if (slot == null || slot == null || slot.gameObject == null) return;
+        if (slot == null || slot.gameObject == null) return;
         if (slot.currentItem == null) return;
 
         var item = slot.currentItem;
