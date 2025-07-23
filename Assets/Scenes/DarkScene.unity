@@ -24550,7 +24550,7 @@ MonoBehaviour:
   attackPoint: {fileID: 1585197663}
   maxStamina: 100
   maxMana: 100
-  maxHealth: 10000
+  maxHealth: 300
   skillPrefabs:
   - {fileID: 0}
   - {fileID: 0}
@@ -25153,7 +25153,7 @@ Transform:
   m_GameObject: {fileID: 1423889149}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -61.13, y: 2.54, z: 0}
+  m_LocalPosition: {x: -58.72, y: 2.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -273608,7 +273608,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
   enemyCount: 5
-  spawnRadius: 10
+  spawnRadius: 5
   spawnDelay: 1
 --- !u!58 &2078046535
 CircleCollider2D:

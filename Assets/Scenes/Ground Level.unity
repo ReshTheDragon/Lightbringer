@@ -2771,7 +2771,7 @@ Transform:
   m_GameObject: {fileID: 236809205}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 121.54, y: 17.4, z: 0}
+  m_LocalPosition: {x: 121.32, y: 15.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8508,7 +8508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &722468127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8522,8 +8522,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
-  enemyCount: 3
-  spawnRadius: 10
+  enemyCount: 2
+  spawnRadius: 5
   spawnDelay: 1
 --- !u!58 &722468128
 CircleCollider2D:
@@ -202381,9 +202381,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackPoint: {fileID: 161883492}
-  maxStamina: 100
-  maxMana: 100
-  maxHealth: 10000
+  maxStamina: 200
+  maxMana: 200
+  maxHealth: 500
   skillPrefabs:
   - {fileID: 0}
   - {fileID: 0}
@@ -202858,7 +202858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1101709206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202872,8 +202872,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
-  enemyCount: 3
-  spawnRadius: 10
+  enemyCount: 2
+  spawnRadius: 3
   spawnDelay: 1
 --- !u!58 &1101709207
 CircleCollider2D:
@@ -228113,7 +228113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1404479223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228127,8 +228127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
-  enemyCount: 3
-  spawnRadius: 10
+  enemyCount: 2
+  spawnRadius: 5
   spawnDelay: 1
 --- !u!58 &1404479224
 CircleCollider2D:
@@ -228175,7 +228175,7 @@ Transform:
   m_GameObject: {fileID: 1404479222}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 115.5, y: 1.5, z: -0.27710915}
+  m_LocalPosition: {x: 98.12, y: -3.42, z: -0.27710915}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -281706,7 +281706,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1887230966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281720,8 +281720,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
-  enemyCount: 3
-  spawnRadius: 10
+  enemyCount: 2
+  spawnRadius: 3
   spawnDelay: 1
 --- !u!58 &1887230967
 CircleCollider2D:

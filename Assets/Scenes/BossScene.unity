@@ -49382,9 +49382,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackPoint: {fileID: 1528270405}
-  maxStamina: 100
-  maxMana: 100
-  maxHealth: 10000
+  maxStamina: 200
+  maxMana: 200
+  maxHealth: 500
   skillPrefabs:
   - {fileID: 0}
   - {fileID: 0}
@@ -55206,7 +55206,7 @@ MonoBehaviour:
   rangedAttackDamage: 15
   rangedAttackPrefab: {fileID: 2209176688347403465, guid: 4042a9fe83ae0584aaea2d08da941031, type: 3}
   spellCastTime: 1.5
-  summonEnemyPrefab: {fileID: 7338080773440073098, guid: 2d11b06351f418246b37b4b7cfeb858c, type: 3}
+  summonEnemyPrefab: {fileID: 3941771935938117399, guid: 9e9990259e20f0d4aafd448380324899, type: 3}
   summonCount: 10
   summonRadius: 10
   summonDelay: 1
